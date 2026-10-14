@@ -41,6 +41,14 @@ This provides a similar experience to working directly on the cluster while keep
 
 Setup is required only once for each computer/project.
 
+### Starting point — a reusable local setup tool
+
+Download `gaas-set-up-package/` **once to any convenient folder on your own computer**, separate from research projects (for example, `~/Downloads/gaas-set-up-package/`). Open the folder with a **local** AI agent, let it read `AGENTS.md` and this guide, and issue `SET-UP`. There is no need to download a research project first: its location will be established during Section 3.
+
+Treat the setup package as a **read-only, reusable tool** for any number of projects. **Never write project-specific paths, credentials, Git remotes, configuration, logs, generated instructions, or setup state back into this package.** Project-specific changes belong in the confirmed research project or in separately approved user configuration locations (such as SSH settings). The tool folder is not the research project's Git working directory, and it should not be copied wholesale into that project.
+
+The target research project may be outside the folder in which the agent starts. The location and permission checkpoint in Section 3 handles this transition. **User permission and technical workspace access are distinct:** if the agent cannot access a confirmed local project directory, ask the researcher to grant/add that folder in the local agent's workspace or reopen a **local** agent workspace with access to the project and the setup guide. Do not bypass restrictions by relocating project files, modifying the reusable package, or running the agent on GAAS.
+
 ### Before you start — identify the researcher's environment
 
 This guide describes the **desired end state**, not a requirement to use WSL or a particular editor. Researchers may work on Windows (PowerShell or WSL), macOS, Linux, local VS Code, terminal-based agents, or with an SSH client such as MobaXterm. **The AI agent must run on the researcher's own computer**, not as an agent or VS Code Remote-SSH extension process on the shared GAAS login node.
@@ -232,6 +240,27 @@ Proceed only once the user understands the chosen repository, authorization, and
 
 ---
 
+## Project location and permission checkpoint (Cases A, B, C)
+
+At the appropriate point in the case below, **pause before the first project-specific file inspection, directory creation, clone, Git initialization, or edit** in a location not already approved. This checkpoint happens *within project setup*; it is not a separate preliminary installation step. Keep the downloaded setup-package folder read-only.
+
+The agent should summarize the intended setup and ask the researcher to confirm:
+
+1. **Exact locations:** the existing or proposed **local research project directory**, the **GAAS-side project/code working directory**, and any additional relevant data/script directories. Distinguish all of these from the **downloaded setup package**; `~/project` and `/home/<username>/<project>` are illustrative placeholders, not assumed paths.
+2. **Repository relationship:** the existing or proposed Git remote and which code working copies it will connect. Do not assume all research data belongs in Git; Section 3A determines that scope.
+3. **Permissions by scope:** ask separately for permission to inspect specified locations and to perform needed **additive** changes (for example, creating a directory, initializing Git in place, preparing a code-only companion directory, or adding `.gitignore`/agent instructions). Directory access does **not** authorize overwrites, deletion, publication, bulk transfer, commit, or push; obtain subsequent confirmations at the relevant steps.
+4. **Workspace access:** verify that the local agent can actually reach the approved local path and that GAAS access uses approved SSH. If access is blocked by the agent's workspace/sandbox, guide the researcher to grant access or reopen an appropriately scoped **local** workspace. Do not alter the reusable setup tool or silently widen permissions.
+
+**Do not proceed without confirmed locations and permission for the intended operation.** If uncertain, stop and ask the researcher. Keep all project-specific answers in the active session or in explicitly approved project-local records, never inside the reusable setup package.
+
+| Case | When to perform the checkpoint |
+| --- | --- |
+| **A — New project** | After deciding the local/GAAS paths, **before** creating local folders, initializing Git, or cloning to GAAS. |
+| **B — Existing Git project** | After identifying the repo URL and any existing local/GAAS clones, **before** cloning into, inspecting, or changing the project folders. |
+| **C — GAAS-only project** | After identifying the existing GAAS project and proposed local code workspace, **before** inspecting the GAAS project directory, initializing Git, creating a companion folder, or copying files. |
+
+---
+
 There are three common ways to reach this setup, depending on where the project
 currently lives. Pick the case that matches your situation.
 
@@ -245,11 +274,13 @@ from the beginning so the two-clone workflow works immediately.
 In your browser, create a new repository and leave it **empty**: do not add a
 README, `.gitignore`, or license. An empty repository is easiest to push a new
 project into. Copy the repository URL, for example
-`git@github.com:<you>/<project>.git`.
+`git@github.com:<you>/<project>.git`. Creating this Git-host repository requires the researcher's approval.
+
+**Project location & permission checkpoint:** Identify the intended **local project directory** and **GAAS-side code directory** with the researcher and apply the Section 3 checkpoint **before Step 2 creates or changes anything in those directories**. Resolve any workspace-access restrictions first; the setup-package folder must remain separate and unchanged.
 
 **Step 2 — Set up the project locally and push it.**
 
-On your local computer:
+On your local computer, use the **confirmed new local project path** (the `~/project` path below is an example, not a required location):
 
 ```bash
 mkdir ~/project && cd ~/project     # create and enter the project folder
@@ -277,20 +308,22 @@ repository from GAAS unless the approved access method is already in place.
 
 ## Case B — Your project already has a GitHub repository
 
-On your local computer:
+**Project location & permission checkpoint:** Identify the repository URL and any existing **local** and **GAAS-side** working copies. Confirm their exact paths and the requested access/creation scope using the Section 3 checkpoint **before cloning into or inspecting those project directories**. If an existing copy is already correct, reuse it rather than cloning over it. If the local agent lacks workspace access, have the researcher grant it while keeping the downloaded setup package unchanged.
+
+If a suitable local clone does not already exist, on your local computer:
 
 ```bash
 git clone <repository-url>
 cd <repository>
 ```
 
-Then connect to GAAS:
+Then connect to GAAS if a remote clone still needs to be created:
 
 ```bash
 ssh gaas
 ```
 
-and clone the same repository **using an approved GAAS-side access method**:
+Only if the **confirmed GAAS-side directory does not already contain an appropriate working copy**, clone the same repository **using an approved GAAS-side access method**:
 
 ```bash
 git clone <approved-repository-url>
@@ -324,6 +357,8 @@ This is a common and tricky situation: research files already live on GAAS, but 
 In your browser, create a new repository with appropriate visibility and leave it **empty**: do not add a README, `.gitignore`, or license. Copy its repository URL. Confirm that uploading the selected research code to this host is permitted.
 
 **Step 2 — Choose where to add Git, without moving the project.**
+
+**Project location & permission checkpoint:** Confirm with the researcher the **exact GAAS project path** and proposed **local code working directory**. Apply the checkpoint in Section 3, including permission to inspect the specified GAAS project and separate approval for any in-place Git initialization or code-only companion copy, **before** the inspection below or any changes. SSH login access alone does not grant permission to inspect unrelated research locations; any local workspace restrictions must be resolved by the researcher without modifying the downloaded tool.
 
 From your own terminal, connect to GAAS and inspect your project directory:
 
@@ -644,7 +679,9 @@ The computational workload should run through PBS rather than directly on the lo
 
 # 8. Normal Workflow After Setup
 
-Once configured, day-to-day usage should feel very similar to a normal local agent workflow.
+Once configured, the researcher can close the setup-package workspace and open **their own local research project** with the agent. Keep the downloaded package in its original local folder for future projects; it must not contain the current project's configuration, paths, or state.
+
+Day-to-day usage should feel very similar to a normal local agent workflow.
 
 For example:
 
