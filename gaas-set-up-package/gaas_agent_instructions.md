@@ -7,15 +7,54 @@ the GAAS login node itself. When you need to do something on the cluster, you
 reach it over SSH only, and you run work only through the PBS scheduler on
 compute nodes.
 
-Below is how to connect, how to manage the two copies of the project, the
+Below is how to connect, how to synchronize approved project code, the
 commands you will commonly use on the cluster, and the rules you must follow.
+
+---
+
+## Project-local configuration — complete during `SET-UP`
+
+**This source file is a reusable template, not a configured project policy.**
+The onboarding agent copies it into the researcher's **approved local project**
+and personalizes **the installed copy only**. Never modify the template inside
+the downloaded setup package or store secrets in either copy. The researcher
+must review the adapted instructions.
+
+| Setting | Confirmed, project-specific value |
+| --- | --- |
+| Local agent runtime and local code working directory | <approved-runtime-and-local-path> |
+| Working SSH alias/command from the **agent's** local runtime | <approved-ssh-connection> |
+| GAAS username | <approved-gaas-username> |
+| GAAS code working directory and PBS job-script path | <approved-gaas-code-path> |
+| Other authorized GAAS paths and access level (read-only / read-write) | <approved-path-allowlist-or-none> |
+| Code synchronization mode | <shared-Git-remote / approved-local-controlled-transfer / other-approved-method> |
+| Git remote and branch, **if shared Git** | <confirmed-remote-branch-or-not-applicable> |
+| Exact alternative synchronization procedure, **if applicable** | <approved-procedure-or-not-applicable> |
+
+**Before ordinary use:** Replace applicable configuration placeholders with
+confirmed, nonsensitive values; mark irrelevant fields **Not applicable**.
+Adapt SSH examples, working directories and Git instructions below to the
+selected method. **Do not leave `ssh gaas` or Git push/pull as active assumptions
+if they do not work for this project.** Record no tokens, passwords, private
+keys, MFA codes or credential contents. If any required location, connection
+or sync procedure is unknown, report onboarding as incomplete rather than
+guessing.
+
+Distinguish approved **code write/execute locations** from directories where
+the researcher is permitted only to **read existing datasets/results**.
+SSH access and filesystem visibility do not authorize access to unrelated
+locations. Use only the paths and access levels explicitly confirmed with the
+researcher and allowed by cluster policy.
 
 ---
 
 ## 1. SSH access
 
-The cluster is reached through the SSH alias `gaas`. It is already configured
-in `~/.ssh/config` on the local computer as:
+The example below uses SSH alias `gaas` with OpenSSH **for illustration only**.
+The installed project copy must use the **actual working SSH connection**
+available to the researcher's local agent, as recorded above. Reuse the approved
+client/key/username/port settings rather than changing working SSH configuration
+to match the example:
 
 ```sshconfig
 Host gaas
@@ -30,7 +69,8 @@ Never ask the agent to collect or automate those credentials.
 
 - **Human-operated terminal only:** `ssh gaas` opens an interactive login
   session. Coding agents must use the non-interactive form below instead.
-- Run a single remote command (this is the form you must use):
+- Run a single command using the approved **non-interactive** SSH connection
+  (the example alias is shown below):
 
 ```bash
 ssh gaas "<command>"
@@ -43,17 +83,28 @@ ssh gaas "hostname"
 ssh gaas "qstat"
 ```
 
-Always use the `ssh gaas "<command>"` form for cluster operations. Do not open
-an interactive shell and type commands into it. Do not ask for, read, store,
+Always use one-shot, non-interactive SSH commands using the **approved local
+connection**. Substitute the confirmed command/alias for `ssh gaas` throughout
+the installed project copy wherever it differs. Do not open an interactive
+shell and type commands into it. Do not ask for, read, store,
 echo, or log the SSH password. Never use `sshpass`, password files, or any tool
 that enters a password automatically.
 
 ---
 
-## 2. The two clones: local and GAAS
+## 2. Code synchronization — use the approved project method
 
-The project exists as two Git clones that are kept in sync through a shared Git
-remote (for example GitHub).
+**The synchronization method chosen during onboarding controls this section.**
+A shared Git remote with two working copies is the recommended **default**,
+not a requirement for every research project. Some projects instead use an
+institutionally approved local-controlled transfer or other approved system.
+Never migrate or reorganize existing research files merely to adopt this
+workflow.
+
+### Option A — Shared Git remote (only when approved and operational)
+
+In this mode, the project has two Git working copies that can access the
+approved remote (for example GitHub).
 
 - **Local clone** — your primary workspace. This is where you read and edit
   files, prepare and review scripts, and make commits. You live and work here.
@@ -61,7 +112,8 @@ remote (for example GitHub).
   cluster: compiling, submitting jobs, running cluster-specific software, and
   accessing GAAS resources.
 
-The two are kept consistent with Git, not by editing files in both places:
+When Option A is configured, keep them consistent through Git instead of
+editing code independently in both places:
 
 ```text
 Git remote (e.g. GitHub)
@@ -73,7 +125,7 @@ Git remote (e.g. GitHub)
   you edit here    PBS / cluster execution
 ```
 
-### Basic Git rules
+### Git rules (only for Option A)
 
 - Before working in either clone, run `git status` to inspect its state.
 - Prepare, review, and commit changes in the **local** clone, then `git push`
@@ -86,13 +138,34 @@ Git remote (e.g. GitHub)
   inspect the difference. Do not create a merge commit automatically and do not
   overwrite or delete the researcher's changes.
 
+### Option B — Another explicitly approved synchronization method
+
+If this project uses local-controlled file transfer or another approved
+non-shared-Git workflow, use **only its documented, approved procedure** and
+source/destination paths. **Do not run `git push`, `git pull`, or `git status`
+as mandatory steps on directories that are not Git repositories.** Do not
+assume private GitHub credentials or keys are available on GAAS, and never
+copy personal Git-host credentials to the cluster.
+
+Before transferring code, confirm the source of truth, included file list,
+destination, and conflict/overwrite policy. Do not silently transfer datasets,
+delete destination files, overwrite divergent work, or run destructive sync
+options. Verify the intended code revision at the authorized GAAS working
+path before job submission. **If no exact alternative procedure has been
+approved, stop; do not invent one.**
+
+**All methods:** Honor the approved project-directory allowlist, keep original
+research data in place, and do not edit source on both sides without an
+agreed reconciliation procedure.
+
 ---
 
 ## 3. Common cluster commands
 
-The commands below cover typical cluster work. Use the `ssh gaas "..."` form for
-all of them. The modules and job commands are read-write but non-destructive in
-normal use; use them as needed rather than treating this as an exhaustive,
+The commands below illustrate alias `gaas`. **In the project-local copy,
+adapt the alias, username, paths, and method-dependent steps to the confirmed
+project configuration.** The modules and job commands are read-write but
+non-destructive in normal use; use them as needed rather than treating this as an exhaustive,
 "nothing else is ever allowed" list. However, always honour the working rules at
 the end of this section.
 
@@ -136,7 +209,7 @@ ssh gaas "tail -n 50 <job-name>.o<job-id>"   # view the end of the output
 ssh gaas "cat <job-name>.e<job-id>"      # view error output
 ```
 
-### Basic navigation (inside your own home area only)
+### Basic navigation (inside the project's approved GAAS paths only)
 
 ```bash
 ssh gaas "pwd"
@@ -146,21 +219,19 @@ ssh gaas "cd <subdirectory> && pwd"
 
 ### Rules for working on the cluster
 
-1. **Stay inside your own home directory.** For any setup or work performed on
-   the login node, stay within your own home directory `/home/<your_gaas_username>`
-   (ask the researcher for the username beforehand if you do not know it). Do not
-   roam outside this directory.
+1. **Stay inside explicitly approved GAAS paths.** The researcher's home
+   directory is the default; approved project/shared-group/scratch/data paths
+   outside it are allowed **only** when the researcher has permission and
+   GAAS policy permits their use. Use the project-local allowlist and observe
+   each path's read-only or read-write scope. Do not infer permission simply
+   from filesystem visibility or enter unrelated user/project directories.
 2. **Do not run compute on the login node.** Never run computational work
    (builds, runs, experiments) directly on the login node. All compute must go
    through the scheduler — either a batch job (`qsub ...`) or an interactive job
    terminal.
-3. **Prefer the local repository for reading.** Anything that can be answered by
-   reading the repository locally (for example, reading files for context) should
-   be done in the local clone first; SSH into the cluster only when the files are
-   not present locally or the local information is not enough. For tasks that
-   involve probing the cluster to discover information, you are responsible for
-   deciding whether to use SSH or to search locally — do whichever is effective,
-   provided you honour rules 1 and 2 above.
+3. **Prefer the local project for reading.** Read approved local code first
+   when it contains enough information. Use SSH for information that genuinely
+   requires GAAS, honoring the approved path allowlist and rules 1–2 above.
 
 ---
 
@@ -187,7 +258,8 @@ Beyond the working rules in Section 3, you must also follow these:
   the agent, and you live on the local computer only.
 - **Use SSH for remote operations.** The login node is not your development
   environment. Edit files locally and use SSH for the cluster-specific steps.
-- **Work inside your own home directory.** Do not list or read other users'
-  directories, do not run `find /`, and do not use `sudo`. Do not install
-  software unless the researcher approves it.
+- **Work only in approved GAAS paths.** Honor the project's home, code,
+  scratch, and dataset allowlist and each path's read/write permissions.
+  Never inspect unrelated users' personal directories, run `find /`, or
+  use `sudo`. Do not install software unless the researcher approves it.
 - **Do not bypass cluster restrictions or exploit unintended system access.**
