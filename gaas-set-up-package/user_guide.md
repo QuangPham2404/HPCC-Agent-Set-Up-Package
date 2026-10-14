@@ -269,7 +269,9 @@ currently lives. Pick the case that matches your situation.
 ## Case A — Creating a brand-new project
 
 If you are starting a fresh project (no code and no repository yet), set up Git
-from the beginning so the two-clone workflow works immediately.
+from the beginning so the two-clone workflow works immediately. **If your files
+already exist locally but Git is not configured, use the Case A variant below
+instead of creating a fresh project directory.**
 
 **Step 1 — Create a new, empty repository on GitHub (or your Git host).**
 
@@ -305,6 +307,25 @@ You now have a local clone at `~/project` and a GAAS clone at `~/project` on the
 cluster, connected through the same Git repository. For a public GitHub repository,
 the approved cluster URL can be an HTTPS clone URL. Do not try to clone a private
 repository from GAAS unless the approved access method is already in place.
+If GAAS cannot access a private remote without personal credentials, **skip
+the GAAS clone** and use the approved local-controlled transfer in Section 3B
+after reviewing the specific files in Section 3A.
+
+### Case A variant — Existing local project without Git
+
+At the Section 3 location/permission checkpoint, confirm the **existing local
+project** and intended GAAS code/PBS directory. **Do not run the fresh-project
+`mkdir` example or reorganize existing files.** After permission to inspect
+the directory, review code, data, secrets, and `.gitignore` under Section 3A
+**before** staging or transfer. With approval, `git init` may be run *in
+place* if it is not already a repository. Stage only reviewed source/scripts,
+and push from the local computer to an approved remote if one is desired.
+Existing remotes and tracked work must be reused rather than overwritten.
+
+For GAAS deployment, use the shared-Git clone only if its authentication is
+approved and functional. Otherwise, use Section 3B's **explicit-file
+local-to-GAAS** procedure. Either choice keeps the existing local project
+structure intact.
 
 ---
 
@@ -333,8 +354,10 @@ cd <repository>
 ```
 
 If this is a private repository and GAAS cannot access it under the credential
-policy above, pause before cloning and agree on an alternative synchronization
-method. Do not install personal Git-host credentials on GAAS.
+policy above, **skip the GAAS clone** and choose the concrete local-controlled
+transfer in **Section 3B** after reviewing the file list in Section 3A, or an
+other documented institutionally approved method. Do not install personal
+Git-host credentials on GAAS.
 
 You now have:
 
@@ -346,13 +369,25 @@ GAAS
 ~/project
 ```
 
-connected through the same Git repository.
+connected through the same Git repository **when shared-Git mode is used**.
+With Section 3B, the GAAS code directory is a deployment destination, not
+necessarily a second Git clone.
 
 ---
 
 ## Case C — Your project exists only on GAAS (no GitHub repository yet)
 
 This is a common and tricky situation: research files already live on GAAS, but there may be no shared Git repository or local code copy. **Do not migrate or reorganize the existing GAAS project.** The goal is to add a safe synchronization workflow for *approved code and scripts*, while leaving datasets, outputs, and existing paths alone.
+
+**Choose the sync mode first.** The numbered Steps 1–5 below apply to
+**shared-Git mode**, only when GAAS can access the approved Git remote.
+If it cannot access a private Git repository, **do not initialize Git,
+configure a remote, or attempt GitHub authentication on GAAS** just to follow
+those steps. Instead, confirm the Case C project locations/permissions using
+the Section 3 checkpoint, inspect only approved code paths, complete Section
+3A's file inventory, and use **Section 3B's GAAS-to-local import**. The local
+working copy may then be Git-controlled and pushed to a private remote
+**from the local computer only**, if the researcher approves.
 
 **Step 1 — Create an empty repository on GitHub (or your approved Git host).**
 
@@ -431,6 +466,27 @@ code ~/project
 
 The editor and agent now operate on the local code copy. The original GAAS project, its datasets, and its existing directory layout are preserved. If you chose a separate companion Git directory, document which project scripts/paths it corresponds to; do not silently substitute it for the original research workspace.
 
+### Case C — Decide where PBS will execute the project code
+
+Before marking the GAAS-only setup complete, confirm the **original GAAS
+project path**, any **separate code-only companion**, the **exact PBS job
+script/execution directory**, and authorized existing data paths. The
+researcher must explicitly approve one arrangement:
+
+- **Original project executes jobs:** Deploy reviewed code there only with
+  permission, checking each proposed replacement. Keep datasets, outputs,
+  and unrelated files unchanged.
+- **Companion code directory executes jobs:** Submit from the approved
+  companion directory, referencing original datasets through existing,
+  individually authorized paths. Do not move data, alter existing jobs, or
+  redirect running workloads.
+
+Identify how code reaches the chosen **actual execution directory**, and
+confirm the intended revision and script path there before PBS submission.
+Record the decision in the **personalized project-local**
+`gaas_agent_instructions.md`, never in the reusable tool. If no safe mapping
+is approved, onboarding is incomplete.
+
 The intended relationship is:
 
 ```text
@@ -473,6 +529,76 @@ Datasets and results need not be transferred to the laptop or Git host. Some pro
 **Step 4 — Handle already-tracked data separately.** `.gitignore` does **not** untrack files that Git already tracks and does not remove files from prior commits. If large or sensitive files are already tracked, **stop and consult the researcher** about an approved cleanup or alternative repository; do not delete local files, rewrite history, or publish the repository automatically.
 
 **Completion condition:** the researcher approves the synchronized code scope, the ignored GAAS-only data paths, the chosen Git host, and the first staged file list. Preserve the existing research directory layout.
+
+---
+
+# 3B. Local-controlled SSH code transfer (private Git or other approved alternative)
+
+This is an **optional, concrete alternative** when GAAS cannot access a
+private Git remote. Git credentials remain **only on the local machine**.
+Apply the **Section 3 location/permission checkpoint** and **Section 3A
+approved-file review** before transferring anything. This is **not** a
+project migration; the original GAAS research tree remains in place.
+
+**Prerequisites:** Confirm an operational local SSH connection, the approved
+local code directory, the GAAS code source/destination and PBS execution
+directory, and whether `rsync` is installed and permitted **on both sides**.
+Do not assume native Windows PowerShell has `rsync` or require the user to
+install WSL. If `rsync` is unavailable, use an **approved individually scoped
+`scp` transfer** or seek administrator help; do not copy the full project.
+
+Have the researcher review a **project-local**
+`approved-code-files.txt` manifest containing **one relative regular-file
+path per line**, relative to the chosen source directory. For example,
+`src/main.py` and `scripts/run.pbs` are only illustrative. Exclude data,
+checkpoints, secrets, output, symlinks requiring special handling, absolute
+paths, `..` traversal, and **directory-only entries**. This manifest and any
+transfer logs belong in the research project, **not the setup tool**.
+
+All paths/aliases in the examples below are **placeholders**. Run these
+commands on the researcher's **local machine** after replacing them with the
+actual authorized locations. `--files-from` restricts transfer to the
+explicitly reviewed list; do not add recursion flags or `--delete`.
+
+### GAAS-only project: import reviewed code to a local working copy
+
+After permission to create the local code directory, **preview** the pull:
+
+```bash
+rsync -tv --dry-run --itemize-changes --files-from="<approved-local-manifest>" "gaas:<approved-gaas-source-root>/" "<approved-local-code-root>/"
+```
+
+Check the preview with the researcher. Only after approval, execute:
+
+```bash
+rsync -tv --itemize-changes --files-from="<approved-local-manifest>" "gaas:<approved-gaas-source-root>/" "<approved-local-code-root>/"
+```
+
+The GAAS originals remain untouched. If the user wants a private Git remote,
+initialize/reuse Git and publish **only reviewed local code** from the local
+computer, after Section 3A's `.gitignore` and staged-file checks. No GitHub
+credential is stored on GAAS.
+
+### Deploy local code to the approved GAAS execution directory
+
+With the approved local source and GAAS deployment destination, first preview:
+
+```bash
+rsync -tv --dry-run --itemize-changes --files-from="<approved-local-manifest>" "<approved-local-code-root>/" "gaas:<approved-gaas-code-root>/"
+```
+
+Review any existing destination files and resolve divergent edits. Only after
+explicit approval for each intended replacement, perform:
+
+```bash
+rsync -tv --itemize-changes --files-from="<approved-local-manifest>" "<approved-local-code-root>/" "gaas:<approved-gaas-code-root>/"
+```
+
+**Never** automatically delete remote files, deploy datasets, or silently
+overwrite divergent work. Confirm that the code and PBS script exist in the
+**agreed execution directory** before submitting. If the transfer method
+cannot be made safe and operational, stop rather than installing GitHub
+credentials on GAAS or inventing an alternative.
 
 ---
 
@@ -684,25 +810,45 @@ Ask the agent to explain which computer/OS is executing it and which SSH client 
 
 ## Test 4 — Submit a small test job
 
-Once basic access works, use a small PBS test job to confirm that the agent understands the intended execution path:
+After the earlier checks, confirm the **approved GAAS code/PBS directory**,
+the user's permission to submit, and any site-required queue/account settings.
+Do not guess a queue or project allocation.
 
-```text
-Local agent
-     │
-     ▼
-SSH into GAAS
-     │
-     ▼
-qsub test.pbs
-     │
-     ▼
-PBS scheduler
-     │
-     ▼
-Compute node
+With approval, create `gaas_setup_smoke.pbs` in the **local research
+project** from this minimal example (adapt resource directives to actual GAAS
+policy):
+
+```bash
+#!/bin/bash
+#PBS -N gaas_setup_smoke
+#PBS -l select=1:ncpus=1
+#PBS -l walltime=00:02:00
+#PBS -j oe
+
+cd "$PBS_O_WORKDIR" || exit 1
+printf 'GAAS_SETUP_SMOKE_OK host=%s\n' "$(hostname)"
 ```
 
-The computational workload should run through PBS rather than directly on the login node.
+Using the project's **approved Git or Section 3B explicit-file transfer**,
+place only this approved script in the confirmed GAAS PBS execution directory.
+Then ask the researcher to approve submission. The local agent should use an
+equivalent non-interactive command (substitute the real alias and authorized
+directory, and quote the remote path correctly for its shell):
+
+```bash
+ssh gaas 'cd <approved-gaas-execution-directory> && qsub gaas_setup_smoke.pbs'
+```
+
+Capture the **job ID** returned by `qsub`; inspect `qstat -f <job-id>` where
+supported and the job's actual PBS output path. A successful scheduled job
+prints `GAAS_SETUP_SMOKE_OK` and a **compute-node hostname**. In this
+example, `#PBS -j oe` merges standard error into standard output. Completed
+jobs may disappear from `qstat`, so inspect their output/status records.
+
+If PBS rejects the submission or the marker is missing, report the error
+and leave the test **unverified**. **Never** run the test computation directly
+on the login node as a workaround. The researcher performs the final manual
+verification before trusting the workflow.
 
 ---
 
