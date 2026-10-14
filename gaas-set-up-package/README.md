@@ -39,11 +39,37 @@ day.
 
 ---
 
+## Download only this package (without Git history)
+
+From a terminal on your **local computer**, run:
+
+```bash
+npx degit QuangPham2404/HPCC-Agent-Set-Up-Package/gaas-set-up-package gaas-set-up-package
+cd gaas-set-up-package
+```
+
+This downloads **only** `gaas-set-up-package/`, not the entire repository.
+Unlike `git clone`, `degit` creates a plain directory **without a `.git/`
+folder**, so the downloaded setup package is **not** tied to this repository's
+Git history. It does not initialize Git in your research project either.
+
+**Requirement:** `npx` needs Node.js and npm installed locally. If they are
+not available, ask your local agent to help obtain just this folder using an
+approved download method, without copying the repository's `.git/` metadata.
+Do not run this setup package on the GAAS login node.
+
+Open the downloaded folder with your **local** agent, make sure it can read
+`AGENTS.md`, then tell it `SET-UP`. The setup procedure will configure your
+*own research project* separately; this downloaded folder is only the
+onboarding guide.
+
+---
+
 ## Two ways to set up
 
 ### Option 1 — Agent-assisted setup (easiest)
 
-1. Download or clone this package onto your computer.
+1. Download only this package onto your computer using the command above (or an equivalent plain-folder download).
 2. Open the package folder with your preferred local AI agent.
 3. Make sure the agent can read `AGENTS.md`.
 4. Tell the agent:
