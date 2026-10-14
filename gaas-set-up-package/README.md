@@ -30,12 +30,13 @@ Benefits:
 | File | What it is for |
 | --- | --- |
 | `user_guide.md` | The manual, step-by-step setup and reference guide. Follow this yourself if you want to set everything up by hand, or if you want to see exactly what the automated setup is doing. |
-| `gaas_agent_instructions.md` | The persistent GAAS instructions your agent follows **after** setup. It covers SSH access, the basic PBS commands, and the general cluster usage rules. |
+| `gaas_agent_instructions.md` | Template for persistent GAAS rules. Onboarding installs and **personalizes a project-local copy** for the actual SSH access, approved GAAS paths, and synchronization method. |
 | `AGENTS.md` | Automatic onboarding instructions. Tell a compatible agent `SET-UP` and it will follow this file. |
 
 `AGENTS.md` is only for the one-time setup. After that,
 `gaas_agent_instructions.md` is what governs how your agent uses GAAS day to
-day.
+day. The package template stays unchanged; each project gets its own reviewed,
+configured copy.
 
 ---
 
