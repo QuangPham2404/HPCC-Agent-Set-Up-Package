@@ -1,7 +1,7 @@
 # AGENTS.md — GAAS Onboarding Instructions
 
-This file defines a one-time, agent-assisted **onboarding procedure** for a new
-GAAS project. It is the agent's guide for turning a user's computer and project
+This file defines a one-time, agent-assisted **onboarding procedure** for a
+research project that will use GAAS. It is the agent's guide for turning a user's computer and project
 into the target workflow:
 
 ```text
@@ -16,7 +16,7 @@ This file is only for onboarding. **Use `user_guide.md` as the comprehensive
 source of truth for setup steps, supported alternatives, and verification.**
 This file only orchestrates those steps for the researcher's own agent; it does
 not prescribe a project directory structure or replace the permanent rules in
- `gaas_agent_instructions.md`. Do not duplicate manual procedures here.
+`gaas_agent_instructions.md`. Do not duplicate manual procedures here.
 
 **Reusable package invariant:** Researchers download this setup package once to
 a folder on their **local computer**, separate from their projects, and may run
@@ -136,6 +136,9 @@ Set up key-based SSH access to GAAS following `user_guide.md` Section 2.
 - The end state is a simple command or alias (e.g. `ssh gaas`) that works from
   the **same local runtime used by the agent**; a working MobaXterm or WSL
   session does not prove that another SSH client can use the same keys.
+- For agent-driven GAAS operations, use one-shot, non-interactive SSH commands
+  with explicit approved working directories as needed. Interactive SSH
+  examples in `user_guide.md` are for manual terminal use only.
 - Use an approved public-key installation method when `ssh-copy-id` is not
   available (for example on some Windows setups). Have the researcher handle
   interactive password/MFA steps and verify unrecognized SSH host keys through
