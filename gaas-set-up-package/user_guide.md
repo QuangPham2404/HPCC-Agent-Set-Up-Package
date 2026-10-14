@@ -533,7 +533,9 @@ Copy the provided:
 gaas_agent_instructions.md
 ```
 
-into the root of your local project.
+into the root of your **confirmed local project** and customize **that
+project-local copy** for the researcher's actual configuration. Keep the
+original inside the reusable setup package unchanged.
 
 For example:
 
@@ -545,6 +547,27 @@ project/
 ├── scripts/
 └── ...
 ```
+
+### Personalize the installed GAAS instructions
+
+Before normal GAAS work, have the local agent configure the **copied**
+`gaas_agent_instructions.md` and ask you to review the changes:
+
+- Fill its **Project-local configuration** table: local project and runtime,
+  actual SSH alias/command, GAAS account, approved code/job directory, and any
+  additional GAAS paths with explicitly approved read/write permissions.
+- Select the real **code synchronization method**. Use a shared Git remote
+  only where both sides have approved access. Otherwise, document the exact
+  institutionally approved local-controlled/other transfer procedure; do not
+  assume GAAS has GitHub credentials.
+- Update the copied file's SSH, path, and Git-command examples to match this
+  project. Mark inapplicable settings accordingly; do not store passwords,
+  tokens, private keys, or MFA information.
+- Inspect the finished project-local file for unresolved required values and
+  contradictory instructions. If a working connection, path authorization,
+  or synchronization procedure is missing, onboarding is **not yet complete**.
+
+The original file in the reusable setup package is **never edited**.
 
 This file tells your agent:
 
@@ -589,7 +612,9 @@ For any task involving the GAAS cluster, first read and follow
 gaas_agent_instructions.md.
 ```
 
-The exact configuration depends on the agent being used.
+The exact configuration depends on the agent being used. Refer the agent to
+the **personalized project-local copy**, not the source template in the
+downloaded setup-package folder.
 
 Examples include:
 
