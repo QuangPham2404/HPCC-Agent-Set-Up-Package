@@ -59,9 +59,59 @@ approved download method, without copying the repository's `.git/` metadata.
 Do not run this setup package on the GAAS login node.
 
 Open the downloaded folder with your **local** agent, make sure it can read
-`AGENTS.md`, then tell it `SET-UP`. The setup procedure will configure your
-*own research project* separately; this downloaded folder is only the
-onboarding guide.
+`AGENTS.md`, then tell it `SET-UP`. You can use this same downloaded folder
+for multiple projects; the agent will ask for the target project's locations
+and permissions during setup, without modifying this reusable tool.
+
+---
+
+## One local tool, multiple research projects
+
+Keep the downloaded `gaas-set-up-package/` in any convenient **local**
+directory (for example, `~/Downloads/gaas-set-up-package/`), **separate from**
+your research projects. It is a reusable **read-only onboarding tool**, not
+a project template or the place to store your research code.
+
+```text
+Local computer
+├── gaas-set-up-package/       # reusable tool, downloaded once
+├── research-project-A/       # separate project, configured as needed
+└── research-project-B/       # another project, same setup tool
+```
+
+You can run `SET-UP` again for another project without downloading the package
+again. **Never store project-specific paths, credentials, Git remotes, logs,
+generated files, or setup state in the setup-package directory.** The agent
+adds approved configuration to the **target project** or an explicitly
+approved user configuration location instead.
+
+### What happens when you run `SET-UP`
+
+1. **Start locally:** Open the setup-package folder with your local AI agent
+   and issue `SET-UP`. You do **not** need to open or download your research
+   project beforehand.
+2. **Prepare access:** The agent follows `user_guide.md` to identify your
+   environment and help with SSH and Git/Git-host access.
+3. **Choose the project:** During project setup, the agent follows the
+   applicable case: **A** (new project), **B** (existing Git project), or
+   **C** (existing GAAS-only project).
+4. **Confirm location and permissions:** At the appropriate point in that
+   case, the agent asks you to confirm the **local and GAAS project paths** and
+   authorize the specific inspections or **additive** changes it needs.
+   If your agent cannot technically access a local directory outside its
+   workspace, you may need to grant that access or reopen a **local**
+   workspace with access to the project and setup guide. Confirmation is not
+   blanket permission to commit, push, delete, or overwrite files.
+5. **Finish onboarding:** The agent helps configure project-specific
+   `.gitignore` rules, sync approved code, and install the persistent
+   `gaas_agent_instructions.md` into your own project. You review significant
+   changes and complete the **manual checks in Section 7** of `user_guide.md`.
+
+After setup, open **your research project** with your local agent for normal
+work. The original setup-package folder remains unchanged and ready for the
+next project. Do not copy the setup package's one-time `AGENTS.md` into the
+research project; the persistent GAAS instructions and their agent-specific
+reference are what belong there.
 
 ---
 
@@ -76,9 +126,8 @@ onboarding guide.
 
    **`SET-UP`**
 
-5. Answer the agent's questions and review its confirmation requests.
-6. When the agent says setup is complete, run the short manual check described
-   in `user_guide.md` (Section 7) before relying on it for normal work.
+5. Answer the agent's questions, including the **project location and permission checkpoint** for your case (A/B/C). Approve any proposed changes to your project or configuration.
+6. When configuration is complete, open **your own local research project** and manually run the checks in `user_guide.md` (Section 7) before normal use.
 
 During setup the agent may ask about things like:
 
@@ -97,10 +146,11 @@ know to set things up correctly.
 
 If you prefer to do everything yourself, just follow `user_guide.md`:
 
-1. Set up key-based SSH access.
-2. Set up the local and GAAS project repositories.
-3. Install `gaas_agent_instructions.md` in your local project.
-4. Complete the verification steps.
+1. Set up or reuse key-based SSH access and check Git/Git-host authentication.
+2. Choose Case A, B, or C in Section 3; **confirm project locations and scoped permissions before accessing or changing the project**.
+3. Establish the appropriate local/GAAS code working copies, and review data exclusions in Section 3A before substantial commits or transfers.
+4. Install `gaas_agent_instructions.md` in the confirmed local research project and configure your agent to read it.
+5. Complete the manual verification in Section 7.
 
 ---
 
@@ -136,11 +186,12 @@ Local computer
 
 ## After setup
 
-After initial set up, make sure to proceed with `Step 7. Test the set up` in `user_guide.md`
+After configuration, complete **Section 7 — Test the Setup** in `user_guide.md` before relying on the workflow.
 
-From then on, you normally work in your **local** project using your preferred
-editor or agent. `gaas_agent_instructions.md` tells the agent how to interact
-with GAAS.
+Close the setup-tool workspace and open your **local research project** in your
+preferred editor or agent. `gaas_agent_instructions.md` governs subsequent
+GAAS operations. Keep the unchanged setup package in its local folder for
+onboarding another project.
 
 You should not normally need to run your coding agent directly on the GAAS login
 node.
