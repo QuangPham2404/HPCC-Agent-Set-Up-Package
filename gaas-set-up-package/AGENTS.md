@@ -186,8 +186,10 @@ Follow the appropriate Case A, B, or C in `user_guide.md` Section 3. Its
 point; being able to read this setup-package folder does not authorize access
 to a research project. Select the appropriate case:
 
-- **New project:** create only the agreed local/cluster code workspace and
-  approved Git remote.
+- **New or existing local project without Git:** for a genuinely new project,
+  create only the approved local/cluster code workspace. For an existing
+  local-only project, follow the **Case A variant** and preserve its directory
+  and files. Configure a Git remote only if selected and approved.
 - **Existing Git project:** inspect and reuse its repositories, remotes, and
   directories; do not recreate or replace them without approval.
 - **GAAS-only project:** preserve the original research tree. With approval,
@@ -238,20 +240,28 @@ checkpoint is satisfied, resume the relevant case in `user_guide.md`.
 Do not introduce `builds/`, `experiments/`, or any structure from
 `reference-workflow-package/`. The researcher's project layout remains theirs.
 
-For **Case C**, it is acceptable to configure Git and the proposed remote
-before the data review, but **defer the first substantial staging, commit,
-push, or code transfer until Stage 4**. Treat `user_guide.md` Section 3A as a
-mandatory gate before Case C's first commit/push. For Cases A/B, inspect
-existing remote contents and permissions before cloning large or sensitive
-material. Never use a bulk transfer as a shortcut around this review.
+For **Case C shared-Git mode**, the approved remote can be configured before
+data review, but **defer the first substantial staging, commit, push, or code
+transfer until Stage 4**. For a private remote that GAAS cannot access,
+**skip the GAAS-side Git push/clone steps** and follow `user_guide.md`
+Section 3B after the location checkpoint and Section 3A's approved-file
+inventory. Do not work around missing Git-host credentials on GAAS.
+
+For a **GAAS-only project** that uses a separate code-only companion directory,
+obtain the researcher's decision about which GAAS directory **PBS will actually
+execute from**, how code is deployed there, and which existing data paths may
+be read. Never redirect existing jobs or alter the original research project
+without explicit approval. For Cases A/B, inspect existing remote contents
+and permissions before cloning large or sensitive material.
 
 ---
 
 ## 4. Research data review and `.gitignore`
 
 Follow `user_guide.md` **Section 3A** only after the applicable Stage 3
-location/permission checkpoint and identification of the Git working copies,
-but **before the first substantial Git commit, push, or large transfer**.
+location/permission checkpoint and identification of the selected **Git
+working copies or approved code-transfer source/destination**, but **before
+the first substantial Git commit, push, or code transfer**.
 
 - Offer to perform a read-only, targeted inventory of source, small
   configuration, scripts, documentation, datasets, checkpoints, binaries, and
@@ -269,7 +279,10 @@ but **before the first substantial Git commit, push, or large transfer**.
   already tracked, **stop** and ask how to proceed; do not automatically
   rewrite history, untrack, delete, or publish it.
 - Only after approval may the agent complete the relevant Git commit/push or
-  code-only sync steps in Section 3, using the approved authentication path.
+  **Section 3B explicit-file transfer** using the approved connection. For
+  local-controlled transfer, review the individual-file manifest and the
+  `rsync --dry-run` preview; require approval for replacements. Never sync
+  an entire data tree or use `--delete` as a shortcut.
 
 ---
 
@@ -300,7 +313,10 @@ installed copy**, as follows:
    stop rather than writing a guessed workaround.
 3. Adapt the **installed copy's** SSH alias, user/path examples, and active
    Git or alternative-sync rules so they do not contradict these values.
-   Remove or label nonapplicable examples; preserve scheduler and login-node
+   Record the **actual GAAS code deployment/PBS execution directory**, and
+   for Case C distinguish that directory from the original research project
+   and any authorized data locations. Remove or label nonapplicable examples;
+   preserve scheduler and login-node
    safety rules. Do **not** write private keys, passwords, tokens or MFA codes.
 4. Preview the proposed project-local changes to the researcher; obtain
    approval before replacing any file. Check that there are no unresolved
@@ -334,8 +350,9 @@ Before reporting setup as configured, inspect the applicable outcomes:
   server running on the GAAS login node as part of this workflow.
 - A working SSH key/alias is available **to the local agent's environment**;
   authentication remains user-managed.
-- An appropriate local code working copy and GAAS-side approved code location
-  are identified without changing the existing research layout.
+- An appropriate local code working copy, approved GAAS code deployment
+  destination and **actual PBS job-script/execution directory** are identified
+  without altering existing research data or project layouts.
 - Git-host access and the approved synchronization method are established,
   with no unapproved credentials on GAAS.
 - The project-specific `.gitignore`, tracked-file scope, and any initial
@@ -351,7 +368,9 @@ Before reporting setup as configured, inspect the applicable outcomes:
 perform safe, read-only checks as it proceeds, but the final manual smoke tests
 in `user_guide.md` Section 7 remain the researcher's responsibility,
 including SSH, PBS, code synchronization/data exclusions, agent location, and a
-small scheduled job. Never claim tests passed if they were not performed.
+small scheduled job using the executable example in Section 7. An agent may
+prepare an approved project-local test script, but must not claim the final
+PBS test was executed without the researcher's approval. Never claim tests passed if they were not performed.
 
 At handoff:
 
