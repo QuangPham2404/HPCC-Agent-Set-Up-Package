@@ -25,7 +25,7 @@ must review the adapted instructions.
 | Local agent runtime and local code working directory | <approved-runtime-and-local-path> |
 | Working SSH alias/command from the **agent's** local runtime | <approved-ssh-connection> |
 | GAAS username | <approved-gaas-username> |
-| GAAS code working directory and PBS job-script path | <approved-gaas-code-path> |
+| GAAS code deployment destination, **actual PBS execution directory**, and job-script path | <approved-gaas-code-and-execution-paths> |
 | Other authorized GAAS paths and access level (read-only / read-write) | <approved-path-allowlist-or-none> |
 | Code synchronization mode | <shared-Git-remote / approved-local-controlled-transfer / other-approved-method> |
 | Git remote and branch, **if shared Git** | <confirmed-remote-branch-or-not-applicable> |
@@ -147,8 +147,15 @@ as mandatory steps on directories that are not Git repositories.** Do not
 assume private GitHub credentials or keys are available on GAAS, and never
 copy personal Git-host credentials to the cluster.
 
-Before transferring code, confirm the source of truth, included file list,
-destination, and conflict/overwrite policy. Do not silently transfer datasets,
+Before transferring code, confirm the source of truth, approved **individual
+regular-file manifest**, destination, **actual PBS execution directory**,
+and conflict/overwrite policy. If the project uses the local-controlled
+SSH workflow, follow the **approved project-local procedure established
+from Section 3B of `user_guide.md`**: dry-run preview, researcher review,
+then explicit authorization for any destination replacements. Do not assume
+the reusable setup package is present during ordinary project work.
+
+Do not silently transfer datasets,
 delete destination files, overwrite divergent work, or run destructive sync
 options. Verify the intended code revision at the authorized GAAS working
 path before job submission. **If no exact alternative procedure has been
@@ -184,6 +191,19 @@ ssh gaas "module purge"                      # unload all modules
 ```
 
 ### Submitting and managing PBS jobs
+
+Use the configured **PBS execution directory** and correct job-script path.
+Non-interactive SSH does not automatically start in the research project:
+specify an approved remote working directory or a valid absolute script path.
+For example (replace both placeholders):
+
+```bash
+ssh gaas 'cd <approved-gaas-execution-directory> && qsub <approved-job>.pbs'
+```
+
+Submitting jobs requires the researcher's authorization; separately confirm
+the **exact job ID** and obtain approval before `qdel` cancels any job. Do
+not execute experimental code directly on the GAAS login node.
 
 ```bash
 ssh gaas "qsub <job>.pbs"                              # submit a job (prints job-id)
@@ -237,14 +257,21 @@ ssh gaas "cd <subdirectory> && pwd"
 
 ## 4. Example: submit a small job and check it
 
-```bash
-ssh gaas "qsub test.pbs"          # submit, note the job-id it prints
-ssh gaas "qstat -u <your_gaas_username>"   # check it is queued/running
+Use the **approved PBS code/execution directory** and an actual test script,
+such as the minimal `gaas_setup_smoke.pbs` described in `user_guide.md`
+Section 7. With authorization, create it in the local project and deploy
+the selected script to the confirmed GAAS code directory. **Do not assume
+it already exists on the cluster.**
 
-# once done, read the output
-ssh gaas "cat test.pbs.o<job-id>"
-ssh gaas "cat test.pbs.e<job-id>"
+```bash
+ssh gaas 'cd <approved-gaas-execution-directory> && qsub gaas_setup_smoke.pbs'
+ssh gaas "qstat -f <returned-job-id>"
 ```
+
+Use the project's actual connection/paths; capture the returned PBS job ID,
+and check the scheduler-designated output for `GAAS_SETUP_SMOKE_OK` and the
+compute-node hostname. A finished job may no longer be displayed by `qstat`.
+Do not run the test directly on the login node.
 
 ---
 
