@@ -24,9 +24,12 @@ Host gaas
     IdentityFile ~/.ssh/id_ed25519
 ```
 
-Authentication uses an SSH key, so no password is needed.
+Authentication uses an SSH key; a local key passphrase, MFA challenge, or other
+user-managed authentication step may still apply, depending on the environment.
+Never ask the agent to collect or automate those credentials.
 
-- Connect normally: `ssh gaas`
+- **Human-operated terminal only:** `ssh gaas` opens an interactive login
+  session. Coding agents must use the non-interactive form below instead.
 - Run a single remote command (this is the form you must use):
 
 ```bash
