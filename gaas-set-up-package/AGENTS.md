@@ -12,8 +12,11 @@ The authoritative, human-facing setup procedure lives in `user_guide.md`. The
 permanent operating rules that get installed live in
 `gaas_agent_instructions.md`.
 
-This file is only for onboarding. Refer to `user_guide.md` for the exact desired
-end state, and install `gaas_agent_instructions.md` for day-to-day cluster work.
+This file is only for onboarding. **Use `user_guide.md` as the comprehensive
+source of truth for setup steps, supported alternatives, and verification.**
+This file only orchestrates those steps for the researcher's own agent; it does
+not prescribe a project directory structure or replace the permanent rules in
+`gaas_agent_instructions.md`. Do not duplicate manual procedures here.
 
 ---
 
@@ -29,17 +32,33 @@ you enter setup mode and help the user establish the workflow described in
 `user_guide.md`. Do as much of the setup as you reasonably can, but never assume
 the user's environment or project structure without evidence.
 
-Before making changes, read both companion documents:
+Before making changes, read both companion documents **in full**:
 
-1. `user_guide.md` — the source of truth for the desired setup.
-2. `gaas_agent_instructions.md` — the operating rules you are installing.
+1. `user_guide.md` — the authoritative setup procedure, including environment
+   discovery, Git credentials, the three project cases, Section 3A data review,
+   and Section 7 manual smoke tests.
+2. `gaas_agent_instructions.md` — the operating rules to install for normal
+   GAAS use.
+
+Follow the ordered stages below, selecting only the relevant branch of the
+user guide for the researcher's situation. **`SET-UP` is an instruction trigger,
+not a shell command or standalone installer.** Do not run any example command
+until its prerequisites, paths, permissions, and environment are confirmed.
 
 ---
 
 ## General behavior
 
-- **Determine the situation first.** Inspect the user's machine and project
-  before changing anything.
+- **Determine the situation first.** Use read-only checks to inspect the local
+  agent environment and the approved project scope before changing anything.
+- **Stay local.** Run the coding agent, editor, and development tools on the
+  researcher's computer; never install or start an agent or VS Code server on
+  the GAAS login node. Use GAAS only for approved remote commands and scheduled
+  computation.
+- **Adapt; do not migrate.** Preserve existing research directories, scripts,
+  datasets, and outputs. Do not relocate, rename, delete, restructure, or
+  overwrite project content to fit this package. Add only approved, identifiable
+  configuration or code-only working copies.
 - **Ask, don't guess.** Whenever a required detail (username, host, file
   locations, intent) cannot be safely inferred, ask the user.
 - **Use your own judgment.** Decide which questions are actually necessary
@@ -54,8 +73,42 @@ Before making changes, read both companion documents:
 - **Avoid destructive actions.** Only delete or overwrite when clearly necessary
   and explicitly approved. If you are unsure how to handle an error safely, stop
   and ask for confirmation, explaining the situation simply.
-- **Never assume files can be committed.** Do not commit anything without
-  reviewing and, for significant or uncertain changes, confirming first.
+- **Never assume files can be committed.** Do not commit or push anything
+  without reviewing the staged file list and confirming significant or uncertain
+  changes, especially on existing projects.
+- **Pause safely.** If required access, an approved synchronization method, or
+  project-scope permission is missing, stop the affected setup stage, explain
+  the blocker, and preserve the current project state. Never work around
+  missing credentials or silently relax restrictions.
+
+---
+
+## 0. Discover the local environment and project
+
+Follow the **"Before you start"** and **"Non-invasive setup rule"** parts of
+`user_guide.md` Section 1 before configuring SSH or Git.
+
+- Identify the OS and shell **where the agent itself runs**, its available SSH
+  and Git tools, and the user's preferred editor (local VS Code, terminal
+  agent, MobaXterm for SSH, etc.). Do not assume WSL or Linux syntax.
+- Determine whether VS Code is using a **local** folder or a GAAS Remote-SSH
+  workspace. If the agent would execute on GAAS, stop and help the user switch
+  to an approved local agent environment before continuing.
+- Reuse existing local SSH access, Git configuration, project directories, and
+  documented cluster paths where possible. Check whether VPN/MFA is required.
+- Identify whether the project is new, already Git-controlled, or only on GAAS.
+  Ask where source/scripts are and whether large data or outputs must remain on
+  GAAS. Inspect only approved project locations; do not crawl unrelated user
+  directories.
+- Choose the relevant platform-specific procedure in `user_guide.md`. Where
+  a sample command is unavailable, explain the equivalent supported option or
+  stop for user assistance. Do not install an alternate OS, SSH client, or
+  remote development server merely to make the example commands work.
+
+Ask only questions whose answers are necessary to proceed. Before any
+configuration, briefly confirm the intended end state and additions with the
+researcher; **do not require them to adopt the reference workflow's directory
+structure**.
 
 ---
 
@@ -68,56 +121,105 @@ Set up key-based SSH access to GAAS following `user_guide.md` Section 2.
 - **Reuse existing valid configuration** where possible (an existing key, an
   existing `Host` entry). Do not create duplicate keys or entries when a valid
   one already works.
-- The end state is a simple command or alias (e.g. `ssh gaas`) that the local
-  agent can use.
+- The end state is a simple command or alias (e.g. `ssh gaas`) that works from
+  the **same local runtime used by the agent**; a working MobaXterm or WSL
+  session does not prove that another SSH client can use the same keys.
+- Use an approved public-key installation method when `ssh-copy-id` is not
+  available (for example on some Windows setups). Have the researcher handle
+  interactive password/MFA steps and verify unrecognized SSH host keys through
+  a trusted source. Use a read-only non-interactive connection check before
+  considering SSH configured.
 - Never read, echo, store, or log SSH passwords or private keys. Never use
   `sshpass` or password automation.
 
 ---
 
-## 2. Project and Git setup
+## 2. Git and Git-host access preflight
 
-Support at least these cases (see `user_guide.md` Section 3):
+Follow the **"Before creating/cloning repositories — Git and Git-host
+credentials"** section of `user_guide.md` **before** Git clone, initial push,
+or repository publication.
 
-- **New project** — no code, no repository yet.
-- **Existing Git project** — already has a repository.
-- **GAAS-only project** — exists on the cluster but has no remote repository.
+- Check Git availability and existing local repository/remote information.
+  Reuse working Git author settings and remote authentication where possible.
+- Ask whether the proposed Git host and repository visibility are permitted for
+  this research. Never assume uploading unpublished code to GitHub is allowed.
+- Distinguish **GAAS SSH credentials** from **Git-host credentials**. Guide the
+  researcher through any required local, interactive login or MFA; do not
+  collect, display, log, or store tokens, passwords, SSH private keys, or MFA
+  codes. Never place personal Git-host credentials on GAAS.
+- Confirm that the selected Git remote can be accessed by the intended side(s).
+  A private repository working locally may fail on GAAS. When GAAS-side access
+  is unavailable, stop and agree on an **approved** alternative synchronization
+  procedure; do not improvise credential workarounds.
+- Check whether an existing remote repository already tracks large or
+  sensitive data **before** cloning it. `.gitignore` cannot retroactively
+  protect previously committed content.
 
-### Inspect a messy or GAAS-only project
-
-For a GAAS-only or disorganized existing project, inspect the structure and work
-with the user to determine:
-
-- which files are source code, configuration, scripts, and documentation that
-  should be version controlled;
-- which files are generated output, build artifacts, datasets, checkpoints,
-  large files, temporary files, or other content that should stay out of Git;
-- whether important project files are spread across multiple directories;
-- whether the proposed repository structure needs clarification from the user.
-
-Create or update a `.gitignore` when appropriate.
-
-### Before the first significant commit or push
-
-Before the first significant commit or push of an existing project, show the
-user a concise summary of:
-
-- what will be included;
-- what will be excluded;
-- any files or directories you are uncertain about.
-
-Ask for confirmation before continuing.
-
-### Credentials and secrets
-
-Never commit credentials, private keys, secrets, tokens, or clearly sensitive
-configuration. Never store GitHub or cluster credentials on GAAS.
+If authorization or private-repository synchronization is unresolved, report
+the blocker and **do not continue to any upload or remote clone requiring it**.
 
 ---
 
-## 3. Agent instruction setup
+## 3. Project and Git setup
 
-Ensure `gaas_agent_instructions.md` is available in the user's local project root. Copy it there if the original file is in another directory (e.g. in a set-up-guide package). Ensure the project's root AGENT.md have the correct path and specifications for that `gaas_agent_instructions.md` file.
+Follow the appropriate Case A, B, or C in `user_guide.md` Section 3:
+
+- **New project:** create only the agreed local/cluster code workspace and
+  approved Git remote.
+- **Existing Git project:** inspect and reuse its repositories, remotes, and
+  directories; do not recreate or replace them without approval.
+- **GAAS-only project:** preserve the original research tree. With approval,
+  add Git metadata **in place** or prepare a **separate, code-only companion
+  working copy**. Never require migration or download of the whole project.
+
+Do not introduce `builds/`, `experiments/`, or any structure from
+`reference-workflow-package/`. The researcher's project layout remains theirs.
+
+For **Case C**, it is acceptable to configure Git and the proposed remote
+before the data review, but **defer the first substantial staging, commit,
+push, or code transfer until Stage 4**. Treat `user_guide.md` Section 3A as a
+mandatory gate before Case C's first commit/push. For Cases A/B, inspect
+existing remote contents and permissions before cloning large or sensitive
+material. Never use a bulk transfer as a shortcut around this review.
+
+---
+
+## 4. Research data review and `.gitignore`
+
+Follow `user_guide.md` **Section 3A** after identifying the relevant Git
+working copies but **before the first substantial Git commit, push, or large
+transfer**.
+
+- Offer to perform a read-only, targeted inventory of source, small
+  configuration, scripts, documentation, datasets, checkpoints, binaries, and
+  generated outputs. Avoid reading sensitive content or recursively scanning
+  large datasets just to infer their purpose.
+- Propose a **project-specific `.gitignore`** and a concise include/exclude
+  summary. Keep large datasets, intermediate results, and checkpoints on GAAS
+  when the researcher wants them there; do not force them onto the local
+  computer or the Git host.
+- Ask the researcher to review ambiguous paths and approve the rules and
+  staged file list. Show the dry-run or staged file names before committing.
+  Do **not** blindly run `git add .` on an existing research tree.
+- Check whether files are **already tracked**. `.gitignore` does not remove
+  tracked files or historical Git contents. If large or sensitive content is
+  already tracked, **stop** and ask how to proceed; do not automatically
+  rewrite history, untrack, delete, or publish it.
+- Only after approval may the agent complete the relevant Git commit/push or
+  code-only sync steps in Section 3, using the approved authentication path.
+
+---
+
+## 5. Install the persistent agent instructions
+
+Follow `user_guide.md` Sections 5–6. Install the actual file
+`gaas_agent_instructions.md` into the researcher's **local** project root (or
+another agreed location), after inspecting for a file with that name and
+obtaining approval for any addition or replacement. Do **not** overwrite an
+existing project `AGENTS.md` or other agent policy file. If the project already
+has one, preserve its rules and propose a minimal, reviewed reference to the
+GAAS instructions.
 
 Then help configure the user's chosen agent or harness so it reads these
 instructions for GAAS-related work.
@@ -125,34 +227,51 @@ instructions for GAAS-related work.
 Different tools use different persistent-instruction mechanisms (for example
 `AGENTS.md`, `CLAUDE.md`, `SKILL.md`, or IDE-specific settings). **Do not assume**
 a specific format is supported — determine which agent the user is using and
-adapt accordingly. The simple fallback is the per-session instruction of
-"read and follow `gaas_agent_instructions.md`" described in `user_guide.md`
-Section 6.
+adapt accordingly. Verify that the chosen agent can read the installed rules,
+including in a new session where practical. The simple fallback is the
+per-session instruction to "read and follow `gaas_agent_instructions.md`" as
+described in `user_guide.md` Section 6. A filename or unsupported instruction
+mechanism must not be silently treated as successful installation.
 
 ---
 
-## 4. Completion
+## 6. Configuration handoff and completion
 
-`SET-UP` is not complete until, as applicable:
+Before reporting setup as configured, inspect the applicable outcomes:
 
-- the user has a local working copy of the project;
-- there is an appropriate GAAS-side copy;
-- Git synchronization is configured appropriately;
-- key-based SSH access is configured;
-- the local agent can reach GAAS with a simple command/alias (e.g. `ssh gaas`);
-- `gaas_agent_instructions.md` is installed;
-- the user's agent has a mechanism to read the GAAS instructions;
-- no unresolved high-impact changes remain.
+- The agent is confirmed to execute **locally**, with no new agent/VS Code
+  server running on the GAAS login node as part of this workflow.
+- A working SSH key/alias is available **to the local agent's environment**;
+  authentication remains user-managed.
+- An appropriate local code working copy and GAAS-side approved code location
+  are identified without changing the existing research layout.
+- Git-host access and the approved synchronization method are established,
+  with no unapproved credentials on GAAS.
+- The project-specific `.gitignore`, tracked-file scope, and any initial
+  staging/commit/push have been reviewed and authorized.
+- `gaas_agent_instructions.md` is installed, and the chosen agent knows how
+  to load it for GAAS-related work.
+- Any additions made during onboarding are recorded, with no unresolved
+  high-impact changes or hidden blockers.
 
-You do **not** need to run the final workflow test yourself. When setup is
-complete:
+**Distinguish configuration from verification.** This onboarding agent should
+perform safe, read-only checks as it proceeds, but the final manual smoke tests
+in `user_guide.md` Section 7 remain the researcher's responsibility,
+including SSH, PBS, code synchronization/data exclusions, agent location, and a
+small scheduled job. Never claim tests passed if they were not performed.
 
-1. Stop making configuration changes.
-2. Tell the user clearly that setup is complete.
-3. Point the user to the verification/smoke-test section of `user_guide.md`
-   (Section 7).
-4. Tell the user to run that test manually before relying on the workflow for
-   normal work.
+At handoff:
+
+1. Summarize what was configured, what was reused, and any new files/settings
+   or Git remote(s), in plain language.
+2. Explain what remains unverified and explicitly identify any blocked or
+   incomplete stage. **Do not declare setup complete** if a required stage is
+   blocked; provide the next manual action instead.
+3. If configuration is complete, say **"Configuration complete; manual
+   verification pending"**, direct the researcher to `user_guide.md`
+   Section 7, and stop making changes.
+4. Remind the researcher that future GAAS operations use the installed
+   `gaas_agent_instructions.md`, not this one-time `SET-UP` procedure.
 
 ---
 
