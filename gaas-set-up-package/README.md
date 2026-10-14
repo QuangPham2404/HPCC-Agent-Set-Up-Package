@@ -196,9 +196,6 @@ onboarding another project.
 You should not normally need to run your coding agent directly on the GAAS login
 node.
 
-Before relying on the workflow for real work, complete the short
-smoke-test / verification section in `user_guide.md`.
-
 ---
 
 ## Scope / proof of concept
