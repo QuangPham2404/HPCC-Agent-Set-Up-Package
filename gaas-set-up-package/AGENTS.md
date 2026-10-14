@@ -284,6 +284,34 @@ existing project `AGENTS.md` or other agent policy file. If the project already
 has one, preserve its rules and propose a minimal, reviewed reference to the
 GAAS instructions.
 
+### Personalize the installed copy (required)
+
+The package's source `gaas_agent_instructions.md` is a **read-only template**.
+After copying it to the researcher's approved local project, edit **only that
+installed copy**, as follows:
+
+1. Fill its **Project-local configuration** section with the approved local
+   agent/runtime and project path, functional SSH alias/command, GAAS username,
+   GAAS code/job directory, and explicitly authorized additional GAAS paths
+   with **read-only/read-write scopes**, as established at the Stage 3 checkpoint.
+2. Record the **actual synchronization choice**: shared Git only if it works
+   from all required sides, or an approved alternative **with an explicit
+   procedure**. Where authentication or an alternative procedure is unresolved,
+   stop rather than writing a guessed workaround.
+3. Adapt the **installed copy's** SSH alias, user/path examples, and active
+   Git or alternative-sync rules so they do not contradict these values.
+   Remove or label nonapplicable examples; preserve scheduler and login-node
+   safety rules. Do **not** write private keys, passwords, tokens or MFA codes.
+4. Preview the proposed project-local changes to the researcher; obtain
+   approval before replacing any file. Check that there are no unresolved
+   required configuration placeholders or contradictory active instructions.
+5. Where possible, verify safe, read-only SSH/path access and that the
+   researcher's chosen agent loads **the personalized project-local file**,
+   not the unchanged template in the onboarding package.
+
+**Stage 5 remains incomplete** if the connection, authorized directories, or
+approved sync method/procedure cannot be established.
+
 Then help configure the user's chosen agent or harness so it reads these
 instructions for GAAS-related work.
 
@@ -312,8 +340,9 @@ Before reporting setup as configured, inspect the applicable outcomes:
   with no unapproved credentials on GAAS.
 - The project-specific `.gitignore`, tracked-file scope, and any initial
   staging/commit/push have been reviewed and authorized.
-- `gaas_agent_instructions.md` is installed, and the chosen agent knows how
-  to load it for GAAS-related work.
+- The **personalized, project-local** `gaas_agent_instructions.md` contains
+  confirmed SSH settings, GAAS path allowlist, and approved synchronization
+  method, and the chosen agent knows how to load **that copy**.
 - Summarize any onboarding additions in the handoff or an explicitly approved
   project-local record, **not in the setup package**, with no unresolved
   high-impact changes or hidden blockers.
