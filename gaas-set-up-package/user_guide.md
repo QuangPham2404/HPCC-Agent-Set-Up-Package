@@ -138,7 +138,7 @@ ssh-copy-id <username>@<gaas-host>
 
 You may be asked for your GAAS password during this initial setup.
 
-Afterwards, test:
+Afterwards, **test manually**:
 
 ```bash
 ssh <username>@<gaas-host>
@@ -167,7 +167,7 @@ Host gaas
     IdentityFile ~/.ssh/id_ed25519
 ```
 
-You can now connect using:
+For **manual, interactive terminal use**, you can now connect using:
 
 ```bash
 ssh gaas
@@ -226,11 +226,13 @@ The **local clone** is your primary development workspace.
 
 The **GAAS clone** is used when you need to compile, submit jobs, run cluster-specific software, or access GAAS resources.
 
+**Command examples:** Paths such as `~/project` are illustrative, and anything inside angle brackets (for example, `<repository-url>` or `<username>`) is a placeholder that **must be replaced before executing a command**. Do not paste unedited examples into a shell. Commands involving existing projects must also pass the Section 3 location/permission checkpoint. An AI agent should issue GAAS commands using one-shot `ssh gaas "<remote-command>"`, specifying the approved remote working directory where needed; interactive `ssh gaas` examples below are for human-operated terminals only.
+
 ## Before creating/cloning repositories — Git and Git-host credentials
 
 **GAAS SSH authentication and GitHub authentication are different.** Before following Case A, B, or C, check Git access from the researcher's *local agent environment* and determine how the cluster-side code copy will be synchronized. The agent can diagnose problems and explain choices; the researcher must complete any interactive login/MFA or credential enrollment personally.
 
-1. **Check Git locally.** Run `git --version`. In an existing project, inspect `git status` and `git remote -v`. If new commits will be made, check that the Git author name/email are configured correctly. Do not overwrite global Git settings without permission.
+1. **Check Git locally.** Run `git --version` in the agent's local environment, and ask whether an existing project already uses Git or has a remote. **Do not execute project-local `git status`, `git remote -v`, or similar inspection until that project's path and inspection permission are confirmed at the Section 3 location and permission checkpoint**, unless the scope was explicitly approved earlier. Once approved, inspect existing repository/remote configuration before modifying it. If new commits will be made, check that the Git author name/email are correctly configured. Do not overwrite global Git settings without permission.
 2. **Choose an approved Git host and visibility.** Check whether source code may be sent to GitHub or another host under the researcher's project/institutional rules. Discuss private vs public repository visibility before publishing anything.
 3. **Check local Git-host authentication.** Reuse a working credential manager, provider login (e.g. GitHub CLI if already installed), or user-managed Git SSH key. A key for `ssh gaas` does **not** grant access to `git@github.com`. Never ask the agent to read, display, persist, or transmit passwords, PATs, private keys, or MFA codes.
 4. **Check cluster-side repository access separately.** Public Git repositories usually allow read-only HTTPS cloning on GAAS. Private repositories may not be accessible from the cluster. **Never put personal GitHub credentials or private keys on GAAS.** If GAAS cannot access the chosen remote by an approved method, pause: agree with the researcher and cluster administrators on an approved, local-controlled SSH synchronization mechanism or Git host before continuing. Do not silently set up a credential workaround.
@@ -317,13 +319,13 @@ git clone <repository-url>
 cd <repository>
 ```
 
-Then connect to GAAS if a remote clone still needs to be created:
+For **manual terminal setup only**, connect interactively to GAAS if a remote clone still needs to be created:
 
 ```bash
 ssh gaas
 ```
 
-Only if the **confirmed GAAS-side directory does not already contain an appropriate working copy**, clone the same repository **using an approved GAAS-side access method**:
+Only if the **confirmed GAAS-side directory does not already contain an appropriate working copy**, clone the same repository **using an approved GAAS-side access method**. The next commands are run *inside the manual GAAS session*; a local agent must instead perform the approved operations using non-interactive `ssh gaas "<remote-command>"` calls with the confirmed working directory:
 
 ```bash
 git clone <approved-repository-url>
@@ -360,7 +362,7 @@ In your browser, create a new repository with appropriate visibility and leave i
 
 **Project location & permission checkpoint:** Confirm with the researcher the **exact GAAS project path** and proposed **local code working directory**. Apply the checkpoint in Section 3, including permission to inspect the specified GAAS project and separate approval for any in-place Git initialization or code-only companion copy, **before** the inspection below or any changes. SSH login access alone does not grant permission to inspect unrelated research locations; any local workspace restrictions must be resolved by the researcher without modifying the downloaded tool.
 
-From your own terminal, connect to GAAS and inspect your project directory:
+For **human-operated manual setup only**, connect interactively to GAAS and inspect your confirmed project directory:
 
 ```bash
 ssh gaas
@@ -368,6 +370,8 @@ cd /home/<your_gaas_username>/<project>
 pwd
 ls
 ```
+
+A local AI agent must **not** open an interactive GAAS session to execute those steps. It should instead use non-interactive `ssh gaas "<remote-command>"` calls and an explicit `cd` to the approved remote project directory for each relevant command.
 
 Replace the placeholders with your actual paths. With your approval, either initialize Git **in this existing directory** (which only adds `.git/` metadata) or establish a **separate code-only companion directory** containing only explicitly approved source/scripts. If you choose the latter, keep the original directory and data unchanged; do not copy the entire research tree or redirect existing running jobs.
 
@@ -526,7 +530,7 @@ If the agent cannot use the researcher's existing SSH method safely, stop and as
 Copy the provided:
 
 ```text
-gaas_agent_instruction.md
+gaas_agent_instructions.md
 ```
 
 into the root of your local project.
@@ -535,7 +539,7 @@ For example:
 
 ```text
 project/
-├── gaas_agent_instruction.md
+├── gaas_agent_instructions.md
 ├── README.md
 ├── src/
 ├── scripts/
@@ -558,13 +562,13 @@ Different AI agents support persistent project instructions in different ways.
 
 The goal is simply:
 
-> Whenever the agent performs GAAS-related work, it should read and follow `gaas_agent_instruction.md`.
+> Whenever the agent performs GAAS-related work, it should read and follow `gaas_agent_instructions.md`.
 
 ## Simple method
 
 At the beginning of a session, tell your agent:
 
-> Read `gaas_agent_instruction.md` and follow these instructions for all GAAS-related operations in this session.
+> Read `gaas_agent_instructions.md` and follow these instructions for all GAAS-related operations in this session.
 
 This method works with almost any agent that can access files in your project.
 
@@ -575,14 +579,14 @@ This method works with almost any agent that can access files in your project.
 If your agent supports persistent project instructions, configure it once so that it automatically refers to:
 
 ```text
-gaas_agent_instruction.md
+gaas_agent_instructions.md
 ```
 
 For example, the agent-specific instruction file may contain:
 
 ```text
 For any task involving the GAAS cluster, first read and follow
-gaas_agent_instruction.md.
+gaas_agent_instructions.md.
 ```
 
 The exact configuration depends on the agent being used.
@@ -637,10 +641,10 @@ Ask the local agent to inspect your current jobs.
 It should use an appropriate command such as:
 
 ```bash
-ssh gaas "qstat ..."
+ssh gaas "qstat"
 ```
 
-according to the commands specified in `gaas_agent_instruction.md`.
+according to the commands specified in `gaas_agent_instructions.md`.
 
 ---
 
