@@ -94,8 +94,8 @@ approved user configuration location instead.
 2. **Prepare access:** The agent follows `user_guide.md` to identify your
    environment and help with SSH and Git/Git-host access.
 3. **Choose the project:** During project setup, the agent follows the
-   applicable case: **A** (new project), **B** (existing Git project), or
-   **C** (existing GAAS-only project).
+   applicable case: **A** (new or existing local-only project without Git),
+   **B** (existing Git project), or **C** (existing GAAS-only project).
 4. **Confirm location and permissions:** At the appropriate point in that
    case, the agent asks you to confirm the **local and GAAS project paths** and
    authorize the specific inspections or **additive** changes it needs.
@@ -104,7 +104,9 @@ approved user configuration location instead.
    workspace with access to the project and setup guide. Confirmation is not
    blanket permission to commit, push, delete, or overwrite files.
 5. **Finish onboarding:** The agent helps configure project-specific
-   `.gitignore` rules, sync approved code, and install the persistent
+   `.gitignore` rules, sync approved code (through shared Git or a reviewed,
+   local-controlled SSH transfer), confirm the **actual GAAS/PBS execution
+   path**, and install the persistent
    `gaas_agent_instructions.md` into your own project. You review significant
    changes and complete the **manual checks in Section 7** of `user_guide.md`.
 
@@ -162,13 +164,13 @@ Local computer
 │
 ├── VS Code / terminal
 ├── AI agent
-├── Local project repository
+├── Local code workspace
 └──  SSH
       │
       ▼
  GAAS login node
        │
-       ├── GAAS project repository
+       ├── GAAS code / approved deployment directory
        ├── job submission / monitoring
        │
        ▼
@@ -180,7 +182,8 @@ Local computer
 
 * The AI agent runs **on your computer**.
 * It uses **SSH** only when GAAS access is actually needed.
-* **Git** keeps the local and GAAS project copies in sync.
+* **Approved Git or an explicitly reviewed code-transfer method** keeps the
+  local and GAAS code copies synchronized.
 * Computations are submitted through **PBS**, not run on the login node.
 
 ---
