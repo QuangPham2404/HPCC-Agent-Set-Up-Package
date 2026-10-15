@@ -346,7 +346,7 @@ For **manual terminal setup only**, connect interactively to GAAS if a remote cl
 ssh gaas
 ```
 
-Only if the **confirmed GAAS-side directory does not already contain an appropriate working copy**, clone the same repository **using an approved GAAS-side access method**. The next commands are run *inside the manual GAAS session*; a local agent must instead perform the approved operations using non-interactive `ssh gaas "<remote-command>"` calls with the confirmed working directory:
+Only if the **confirmed GAAS-side directory does not already contain an appropriate working copy**, clone the same repository **using an approved GAAS-side access method**. The next commands are run *inside the manual GAAS session*; your agent must instead perform the approved operations using non-interactive `ssh gaas "<remote-command>"` calls with the confirmed working directory:
 
 ```bash
 git clone <approved-repository-url>
@@ -406,7 +406,7 @@ pwd
 ls
 ```
 
-A local AI agent must **not** open an interactive GAAS session to execute those steps. It should instead use non-interactive `ssh gaas "<remote-command>"` calls and an explicit `cd` to the approved remote project directory for each relevant command.
+Your local AI agent must **not** open an interactive GAAS session to execute those steps. It should instead use non-interactive `ssh gaas "<remote-command>"` calls and an explicit `cd` to the approved remote project directory for each relevant command.
 
 Replace the placeholders with your actual paths. With your approval, either initialize Git **in this existing directory** (which only adds `.git/` metadata) or establish a **separate code-only companion directory** containing only explicitly approved source/scripts. If you choose the latter, keep the original directory and data unchanged; do not copy the entire research tree or redirect existing running jobs.
 
