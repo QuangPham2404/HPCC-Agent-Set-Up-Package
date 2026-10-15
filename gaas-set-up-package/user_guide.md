@@ -47,25 +47,25 @@ Download `gaas-set-up-package/` **once to any convenient folder on your own comp
 
 Treat the setup package as a **read-only, reusable tool** for any number of projects. **Never write project-specific paths, credentials, Git remotes, configuration, logs, generated instructions, or setup state back into this package.** Project-specific changes belong in the confirmed research project or in separately approved user configuration locations (such as SSH settings). The tool folder is not the research project's Git working directory, and it should not be copied wholesale into that project.
 
-The target research project may be outside the folder in which the agent starts. The location and permission checkpoint in Section 3 handles this transition. **User permission and technical workspace access are distinct:** if the agent cannot access a confirmed local project directory, ask the researcher to grant/add that folder in the local agent's workspace or reopen a **local** agent workspace with access to the project and the setup guide. Do not bypass restrictions by relocating project files, modifying the reusable package, or running the agent on GAAS.
+Your research project may be outside the folder where your agent starts. The location and permission checkpoint in Section 3 handles this transition. **Your permission and your agent's technical workspace access are distinct:** if your agent cannot access the confirmed local project directory, you may need to grant/add that folder to its local workspace or reopen a **local** agent workspace with access to both the project and the setup guide. Your agent must not bypass restrictions by relocating project files, modifying the reusable package, or running on GAAS.
 
-### Before you start — identify the researcher's environment
+### Before you start — identify your environment
 
-This guide describes the **desired end state**, not a requirement to use WSL or a particular editor. Researchers may work on Windows (PowerShell or WSL), macOS, Linux, local VS Code, terminal-based agents, or with an SSH client such as MobaXterm. **The AI agent must run on the researcher's own computer**, not as an agent or VS Code Remote-SSH extension process on the shared GAAS login node.
+This guide describes the **desired end state**, not a requirement to use WSL or a particular editor. You may work on Windows (PowerShell or WSL), macOS, Linux, local VS Code, terminal-based agents, or with an SSH client such as MobaXterm. **Your AI agent must run on your own computer**, not as an agent or VS Code Remote-SSH extension process on the shared GAAS login node.
 
-Before making changes, determine:
+Before making changes, you and your agent should establish:
 
-- where the researcher's chosen agent actually runs (Windows, WSL, macOS, or Linux) and what terminal and SSH executable that agent can invoke;
-- whether their current VS Code workspace is local or remote, whether they use MobaXterm, and whether VPN/MFA or existing SSH keys/configuration are already working;
-- where their project currently resides, whether it uses Git, and which remote Git host is permitted for the research.
+- where your chosen agent actually runs (Windows, WSL, macOS, or Linux) and what terminal and SSH executable it can invoke;
+- whether your current VS Code workspace is local or remote, whether you use MobaXterm, and whether VPN/MFA or existing SSH keys/configuration are already working;
+- where your project currently resides, whether it uses Git, and which remote Git host is permitted for your research.
 
-Commands below illustrate an OpenSSH/Git environment. Some tools (notably `ssh-copy-id`) are not installed in every Windows environment. A working connection in MobaXterm does not guarantee the local agent uses the same keys/configuration. Reuse an existing working setup where possible; when a command is unavailable, use the equivalent **approved** procedure for the user's actual environment. The agent should explain differences rather than assume everyone uses WSL.
+Commands below illustrate an OpenSSH/Git environment. Some tools (notably `ssh-copy-id`) are not installed in every Windows environment. A working connection in MobaXterm does not guarantee your local agent uses the same keys/configuration. Your agent should reuse your existing working setup where possible and explain an equivalent **approved** procedure when a command is unavailable in your environment, rather than assuming you use WSL.
 
 ### Non-invasive setup rule
 
-**Adapt to the researcher's project; never migrate, move, rename, delete, or restructure the project merely to use this package.** Setup can add an SSH alias, local code workspace, Git configuration, and agent instructions, but should leave existing GAAS data, output, and project paths intact. For a GAAS-only project, ask whether to add Git metadata (`.git/`) *in place*, or create a separate, small code-only working copy alongside the original. Either option requires the researcher's approval; neither should move their original files.
+**Your agent should adapt to your project, never migrating, moving, renaming, deleting, or restructuring it merely to use this package.** Setup can add an SSH alias, local code workspace, Git configuration, and agent instructions, but should leave existing GAAS data, output, and project paths intact. If your project exists only on GAAS, your agent should ask you whether to add Git metadata (`.git/`) *in place* or create a separate, small code-only working copy alongside the original. Either option requires your approval; neither should move your original files.
 
-Large datasets, checkpoints, and experiment outputs can remain on GAAS and need not be copied to the laptop or GitHub. Identify proposed changes so they can be reversed later without disturbing the research files. Obtain confirmation before changing SSH settings, initializing Git in an existing directory, copying files, staging, committing, or pushing.
+Large datasets, checkpoints, and experiment outputs can remain on GAAS and need not be copied to your computer or GitHub. Your agent should identify proposed changes so they can be reversed later without disturbing your research files, and obtain your confirmation before changing SSH settings, initializing Git in an existing directory, copying files, staging, committing, or pushing.
 
 
 ---
@@ -86,7 +86,7 @@ After setup, both you and your local agent can access GAAS using normal SSH comm
 
 ## Step 1 — Check whether you already have an SSH key
 
-**Environment note:** The commands below assume an OpenSSH client. Windows/PowerShell, WSL, MobaXterm, and local VS Code may use different SSH clients or key locations. Check what the *agent* can invoke, not just what works in the user's terminal. If `ssh-copy-id` is unavailable, ask the user to follow an approved procedure to install only the **public** key on GAAS. Password/MFA prompts must be completed by the user, never recorded or automated by the agent. Verify an unfamiliar server host-key fingerprint through a trusted cluster-admin source before accepting it.
+**Environment note:** The commands below assume an OpenSSH client. Windows/PowerShell, WSL, MobaXterm, and local VS Code may use different SSH clients or key locations. Check what *your agent* can invoke, not just what works in your terminal. If `ssh-copy-id` is unavailable, you will need an approved procedure to install only the **public** key on GAAS. You must complete password/MFA prompts yourself; your agent must never record or automate them. Verify an unfamiliar server host-key fingerprint through a trusted cluster-admin source before accepting it.
 
 On your local computer, run:
 
@@ -189,7 +189,7 @@ ssh gaas "qstat"
 
 ### Why this helps agents
 
-The agent remains on your local machine but can request cluster information whenever it needs it:
+Your agent remains on your local machine but can request cluster information whenever it needs it:
 
 ```text
 Local agent
@@ -202,7 +202,7 @@ Local agent
                    GAAS
 ```
 
-The agent therefore does not need to be installed or run directly on the GAAS login node.
+Your agent therefore does not need to be installed or run directly on the GAAS login node.
 
 ---
 
@@ -226,34 +226,34 @@ The **local clone** is your primary development workspace.
 
 The **GAAS clone** is used when you need to compile, submit jobs, run cluster-specific software, or access GAAS resources.
 
-**Command examples:** Paths such as `~/project` are illustrative, and anything inside angle brackets (for example, `<repository-url>` or `<username>`) is a placeholder that **must be replaced before executing a command**. Do not paste unedited examples into a shell. Commands involving existing projects must also pass the Section 3 location/permission checkpoint. An AI agent should issue GAAS commands using one-shot `ssh gaas "<remote-command>"`, specifying the approved remote working directory where needed; interactive `ssh gaas` examples below are for human-operated terminals only.
+**Command examples:** Paths such as `~/project` are illustrative, and anything inside angle brackets (for example, `<repository-url>` or `<username>`) is a placeholder that **must be replaced before executing a command**. Do not paste unedited examples into a shell. Commands involving existing projects must also pass the Section 3 location/permission checkpoint. Your agent should issue GAAS commands using one-shot `ssh gaas "<remote-command>"`, specifying the approved remote working directory where needed; interactive `ssh gaas` examples below are for human-operated terminals only.
 
 ## Before creating/cloning repositories — Git and Git-host credentials
 
-**GAAS SSH authentication and GitHub authentication are different.** Before following Case A, B, or C, check Git access from the researcher's *local agent environment* and determine how the cluster-side code copy will be synchronized. The agent can diagnose problems and explain choices; the researcher must complete any interactive login/MFA or credential enrollment personally.
+**GAAS SSH authentication and GitHub authentication are different.** Before following Case A, B, or C, you and your agent should check Git access from *your agent's local environment* and determine how the cluster-side code copy will be synchronized. Your agent can diagnose problems and explain choices; you must complete any interactive login/MFA or credential enrollment personally.
 
-1. **Check Git locally.** Run `git --version` in the agent's local environment, and ask whether an existing project already uses Git or has a remote. **Do not execute project-local `git status`, `git remote -v`, or similar inspection until that project's path and inspection permission are confirmed at the Section 3 location and permission checkpoint**, unless the scope was explicitly approved earlier. Once approved, inspect existing repository/remote configuration before modifying it. If new commits will be made, check that the Git author name/email are correctly configured. Do not overwrite global Git settings without permission.
-2. **Choose an approved Git host and visibility.** Check whether source code may be sent to GitHub or another host under the researcher's project/institutional rules. Discuss private vs public repository visibility before publishing anything.
-3. **Check local Git-host authentication.** Reuse a working credential manager, provider login (e.g. GitHub CLI if already installed), or user-managed Git SSH key. A key for `ssh gaas` does **not** grant access to `git@github.com`. Never ask the agent to read, display, persist, or transmit passwords, PATs, private keys, or MFA codes.
-4. **Check cluster-side repository access separately.** Public Git repositories usually allow read-only HTTPS cloning on GAAS. Private repositories may not be accessible from the cluster. **Never put personal GitHub credentials or private keys on GAAS.** If GAAS cannot access the chosen remote by an approved method, pause: agree with the researcher and cluster administrators on an approved, local-controlled SSH synchronization mechanism or Git host before continuing. Do not silently set up a credential workaround.
-5. **Check the scope before cloning.** If the Git remote already contains large datasets or sensitive tracked content, a new `.gitignore` will not remove those files from Git history or prevent a full clone. Review an alternative code-only plan first.
+1. **Check Git locally.** Your agent should run `git --version` in its local environment and ask you whether your existing project uses Git or has a remote. **Your agent must not execute project-local `git status`, `git remote -v`, or similar inspections until you confirm that project's path and inspection permission at the Section 3 location and permission checkpoint**, unless you already approved that scope earlier. Once approved, your agent should inspect existing repository/remote configuration before modifying it. If new commits will be made, it should check that the Git author name/email are correctly configured. It must not overwrite global Git settings without your permission.
+2. **Choose an approved Git host and visibility.** You and your agent should check whether your source code may be sent to GitHub or another host under your project/institutional rules and discuss private versus public visibility before publishing anything.
+3. **Check local Git-host authentication.** Your agent should reuse a working credential manager, provider login (e.g. GitHub CLI if already installed), or your user-managed Git SSH key. A key for `ssh gaas` does **not** grant access to `git@github.com`. Never give your agent passwords, PATs, private keys, or MFA codes to read, display, persist, or transmit.
+4. **Check cluster-side repository access separately.** Public Git repositories usually allow read-only HTTPS cloning on GAAS. Private repositories may not be accessible from the cluster. **Never put personal GitHub credentials or private keys on GAAS.** If GAAS cannot access your chosen remote by an approved method, you and your agent should pause and agree with cluster administrators on an approved, local-controlled SSH synchronization mechanism or Git host before continuing. Your agent must not silently set up a credential workaround.
+5. **Check the scope before cloning.** Your agent should check whether the Git remote already contains large datasets or sensitive tracked content. A new `.gitignore` will not remove those files from Git history or prevent a full clone. You and your agent should review an alternative code-only plan first.
 
-Proceed only once the user understands the chosen repository, authorization, and synchronization path.
+Proceed only after you understand the chosen repository, authorization, and synchronization path.
 
 ---
 
 ## Project location and permission checkpoint (Cases A, B, C)
 
-At the appropriate point in the case below, **pause before the first project-specific file inspection, directory creation, clone, Git initialization, or edit** in a location not already approved. This checkpoint happens *within project setup*; it is not a separate preliminary installation step. Keep the downloaded setup-package folder read-only.
+At the appropriate point in your case below, **your agent must pause before the first project-specific file inspection, directory creation, clone, Git initialization, or edit** in a location you have not already approved. This checkpoint happens *within project setup*; it is not a separate preliminary installation step. The downloaded setup-package folder must remain read-only.
 
-The agent should summarize the intended setup and ask the researcher to confirm:
+Your agent should summarize the intended setup and ask you to confirm:
 
-1. **Exact locations:** the existing or proposed **local research project directory**, the **GAAS-side project/code working directory**, and any additional relevant data/script directories. Distinguish all of these from the **downloaded setup package**; `~/project` and `/home/<username>/<project>` are illustrative placeholders, not assumed paths.
-2. **Repository relationship:** the existing or proposed Git remote and which code working copies it will connect. Do not assume all research data belongs in Git; Section 3A determines that scope.
-3. **Permissions by scope:** ask separately for permission to inspect specified locations and to perform needed **additive** changes (for example, creating a directory, initializing Git in place, preparing a code-only companion directory, or adding `.gitignore`/agent instructions). Directory access does **not** authorize overwrites, deletion, publication, bulk transfer, commit, or push; obtain subsequent confirmations at the relevant steps.
-4. **Workspace access:** verify that the local agent can actually reach the approved local path and that GAAS access uses approved SSH. If access is blocked by the agent's workspace/sandbox, guide the researcher to grant access or reopen an appropriately scoped **local** workspace. Do not alter the reusable setup tool or silently widen permissions.
+1. **Exact locations:** confirm your existing or proposed **local research project directory**, the **GAAS-side project/code working directory**, and any additional relevant data/script directories. Your agent should distinguish these from the **downloaded setup package**; `~/project` and `/home/<username>/<project>` are illustrative placeholders, not assumed paths.
+2. **Repository relationship:** confirm your existing or proposed Git remote and which code working copies it will connect. Your agent should not assume all research data belongs in Git; Section 3A determines that scope.
+3. **Permissions by scope:** your agent should separately ask your permission to inspect specified locations and to perform needed **additive** changes (for example, creating a directory, initializing Git in place, preparing a code-only companion directory, or adding `.gitignore`/agent instructions). Directory access does **not** authorize overwrites, deletion, publication, bulk transfer, commit, or push; your agent must obtain further confirmation from you at the relevant steps.
+4. **Workspace access:** your agent should verify that it can actually reach your approved local path and that GAAS access uses approved SSH. If its workspace/sandbox blocks access, you may need to grant access or reopen an appropriately scoped **local** workspace. Your agent must not alter the reusable setup tool or silently widen permissions.
 
-**Do not proceed without confirmed locations and permission for the intended operation.** If uncertain, stop and ask the researcher. Keep all project-specific answers in the active session or in explicitly approved project-local records, never inside the reusable setup package.
+**Your agent must not proceed without your confirmation of the locations and permission for the intended operation.** If anything remains uncertain, it should stop and ask you. It should keep project-specific answers in the active session or in explicitly approved project-local records, never inside the reusable setup package.
 
 | Case | When to perform the checkpoint |
 | --- | --- |
@@ -278,9 +278,9 @@ instead of creating a fresh project directory.**
 In your browser, create a new repository and leave it **empty**: do not add a
 README, `.gitignore`, or license. An empty repository is easiest to push a new
 project into. Copy the repository URL, for example
-`git@github.com:<you>/<project>.git`. Creating this Git-host repository requires the researcher's approval.
+`git@github.com:<you>/<project>.git`. Creating this Git-host repository requires your approval.
 
-**Project location & permission checkpoint:** Identify the intended **local project directory** and **GAAS-side code directory** with the researcher and apply the Section 3 checkpoint **before Step 2 creates or changes anything in those directories**. Resolve any workspace-access restrictions first; the setup-package folder must remain separate and unchanged.
+**Project location & permission checkpoint:** You and your agent should identify the intended **local project directory** and **GAAS-side code directory**. Your agent must apply the Section 3 checkpoint **before Step 2 creates or changes anything in those directories**. Resolve any workspace-access restrictions first; the setup-package folder must remain separate and unchanged.
 
 **Step 2 — Set up the project locally and push it.**
 
@@ -331,7 +331,7 @@ structure intact.
 
 ## Case B — Your project already has a GitHub repository
 
-**Project location & permission checkpoint:** Identify the repository URL and any existing **local** and **GAAS-side** working copies. Confirm their exact paths and the requested access/creation scope using the Section 3 checkpoint **before cloning into or inspecting those project directories**. If an existing copy is already correct, reuse it rather than cloning over it. If the local agent lacks workspace access, have the researcher grant it while keeping the downloaded setup package unchanged.
+**Project location & permission checkpoint:** You and your agent should identify the repository URL and any existing **local** and **GAAS-side** working copies. Confirm their exact paths and the requested access/creation scope using the Section 3 checkpoint **before your agent clones into or inspects those project directories**. If an existing copy is already correct, your agent should reuse it rather than clone over it. If your agent lacks workspace access, you may need to grant it while keeping the downloaded setup package unchanged.
 
 If a suitable local clone does not already exist, on your local computer:
 
@@ -387,7 +387,7 @@ those steps. Instead, confirm the Case C project locations/permissions using
 the Section 3 checkpoint, inspect only approved code paths, complete Section
 3A's file inventory, and use **Section 3B's GAAS-to-local import**. The local
 working copy may then be Git-controlled and pushed to a private remote
-**from the local computer only**, if the researcher approves.
+**from your local computer only**, if you approve.
 
 **Step 1 — Create an empty repository on GitHub (or your approved Git host).**
 
@@ -395,7 +395,7 @@ In your browser, create a new repository with appropriate visibility and leave i
 
 **Step 2 — Choose where to add Git, without moving the project.**
 
-**Project location & permission checkpoint:** Confirm with the researcher the **exact GAAS project path** and proposed **local code working directory**. Apply the checkpoint in Section 3, including permission to inspect the specified GAAS project and separate approval for any in-place Git initialization or code-only companion copy, **before** the inspection below or any changes. SSH login access alone does not grant permission to inspect unrelated research locations; any local workspace restrictions must be resolved by the researcher without modifying the downloaded tool.
+**Project location & permission checkpoint:** You and your agent should confirm the **exact GAAS project path** and proposed **local code working directory**. Your agent must apply the checkpoint in Section 3, including your permission to inspect the specified GAAS project and your separate approval for any in-place Git initialization or code-only companion copy, **before** the inspection below or any changes. SSH login access alone does not grant permission to inspect unrelated research locations; you must resolve any local workspace restrictions without modifying the downloaded tool.
 
 For **human-operated manual setup only**, connect interactively to GAAS and inspect your confirmed project directory:
 
@@ -432,7 +432,7 @@ Do not run `git remote add` if the remote already exists. A cluster-side remote 
 
 **Step 4 — Review the file scope, then make the first commit and push.**
 
-Follow **Section 3A** to identify what should stay on GAAS, create/review `.gitignore`, and preview the exact files to be staged. Only after the researcher approves the file list and the Git-host policy permits the transfer should the approved Git working directory be committed and pushed:
+Follow **Section 3A** with your agent to identify what should stay on GAAS, create/review `.gitignore`, and preview the exact files to be staged. Your agent should commit and push from the approved Git working directory **only after you approve the file list** and the Git-host policy permits the transfer:
 
 ```bash
 git status --short
@@ -470,8 +470,7 @@ The editor and agent now operate on the local code copy. The original GAAS proje
 
 Before marking the GAAS-only setup complete, confirm the **original GAAS
 project path**, any **separate code-only companion**, the **exact PBS job
-script/execution directory**, and authorized existing data paths. The
-researcher must explicitly approve one arrangement:
+script/execution directory**, and authorized existing data paths. You must explicitly approve one arrangement:
 
 - **Original project executes jobs:** Deploy reviewed code there only with
   permission, checking each proposed replacement. Keep datasets, outputs,
@@ -481,9 +480,9 @@ researcher must explicitly approve one arrangement:
   individually authorized paths. Do not move data, alter existing jobs, or
   redirect running workloads.
 
-Identify how code reaches the chosen **actual execution directory**, and
-confirm the intended revision and script path there before PBS submission.
-Record the decision in the **personalized project-local**
+Your agent should identify how code reaches the chosen **actual execution directory**
+and confirm the intended revision and script path there before PBS submission.
+It should record your decision in the **personalized project-local**
 `gaas_agent_instructions.md`, never in the reusable tool. If no safe mapping
 is approved, onboarding is incomplete.
 
@@ -505,9 +504,9 @@ Existing GAAS research project (unchanged)
 
 # 3A. Review research data and configure `.gitignore`
 
-This step belongs **after identifying or initializing the Git working copies, but before the first substantial `git add`, commit, push, or large transfer**. For the GAAS-only Case C, complete this review before Step 4's first commit/push. **Using an agent is strongly recommended**, especially for projects with large scientific outputs, unfamiliar directory structures, or many file types; the researcher must review the final proposal.
+This step belongs **after identifying or initializing the Git working copies, but before the first substantial `git add`, commit, push, or large transfer**. For the GAAS-only Case C, complete this review before Step 4's first commit/push. **Using your agent is strongly recommended**, especially for projects with large scientific outputs, unfamiliar directory structures, or many file types; you must review the final proposal.
 
-**Step 1 — Inventory the project without modifying it.** Have the agent inspect only the approved project scope. Classify files into: (a) source, scripts, small configuration, and documentation to track; (b) datasets, checkpoints, models, compiled artifacts, logs, intermediate/simulation outputs and other files to keep on GAAS; (c) uncertain/sensitive files requiring the researcher's decision. Avoid recursive scans or transfers of huge datasets when filenames, directory summaries, and targeted inspection are sufficient.
+**Step 1 — Inventory the project without modifying it.** Have your agent inspect only the project scope you approved. It should classify files into: (a) source, scripts, small configuration, and documentation to track; (b) datasets, checkpoints, models, compiled artifacts, logs, intermediate/simulation outputs and other files to keep on GAAS; (c) uncertain/sensitive files requiring your decision. Your agent should avoid recursive scans or transfers of huge datasets when filenames, directory summaries, and targeted inspection are sufficient.
 
 **Step 2 — Draft a project-specific `.gitignore`.** Use actual directory names; do not blindly exclude a directory that holds valuable source or reproducibility metadata. A *starting example only*:
 
@@ -522,13 +521,13 @@ outputs/
 .env
 ```
 
-Datasets and results need not be transferred to the laptop or Git host. Some projects deliberately version-control *small* sample data or result summaries; confirm those exceptions with the researcher. Do not put private keys, access tokens, credentials, or secrets in Git.
+Datasets and results need not be transferred to the laptop or Git host. Some projects deliberately version-control *small* sample data or result summaries; your agent should confirm those exceptions with you. Do not put private keys, access tokens, credentials, or secrets in Git.
 
-**Step 3 — Review, then stage only approved files.** Use `git status --short` and `git ls-files` to check what is already tracked. Check exclusions using `git check-ignore -v <path>` where useful. Preview a proposed addition with `git add -n <approved-paths>`, then ask the researcher to confirm the exact inclusion/exclusion list. For the first substantial commit, prefer explicit approved paths over `git add .`. After staging, review `git diff --cached --name-only` or `git diff --cached --stat` before committing or pushing.
+**Step 3 — Review, then stage only approved files.** Use `git status --short` and `git ls-files` to check what is already tracked. Check exclusions using `git check-ignore -v <path>` where useful. Preview a proposed addition with `git add -n <approved-paths>`, then ask you to confirm the exact inclusion/exclusion list. For the first substantial commit, prefer explicit approved paths over `git add .`. After staging, review `git diff --cached --name-only` or `git diff --cached --stat` before committing or pushing.
 
-**Step 4 — Handle already-tracked data separately.** `.gitignore` does **not** untrack files that Git already tracks and does not remove files from prior commits. If large or sensitive files are already tracked, **stop and consult the researcher** about an approved cleanup or alternative repository; do not delete local files, rewrite history, or publish the repository automatically.
+**Step 4 — Handle already-tracked data separately.** `.gitignore` does **not** untrack files that Git already tracks and does not remove files from prior commits. If large or sensitive files are already tracked, **stop and consult you** about an approved cleanup or alternative repository; do not delete local files, rewrite history, or publish the repository automatically.
 
-**Completion condition:** the researcher approves the synchronized code scope, the ignored GAAS-only data paths, the chosen Git host, and the first staged file list. Preserve the existing research directory layout.
+**Completion condition:** you approve the synchronized code scope, the ignored GAAS-only data paths, the chosen Git host, and the first staged file list. Preserve the existing research directory layout.
 
 ---
 
@@ -540,15 +539,15 @@ Apply the **Section 3 location/permission checkpoint** and **Section 3A
 approved-file review** before transferring anything. This is **not** a
 project migration; the original GAAS research tree remains in place.
 
-**Prerequisites:** Confirm an operational local SSH connection, the approved
+**Prerequisites:** You and your agent should confirm an operational local SSH connection, the approved
 local code directory, the GAAS code source/destination and PBS execution
 directory, and whether `rsync` is installed and permitted **on both sides**.
-Do not assume native Windows PowerShell has `rsync` or require the user to
+Your agent should not assume native Windows PowerShell has `rsync` or require you to
 install WSL. If `rsync` is unavailable, use an **approved individually scoped
 `scp` transfer** or seek administrator help; do not copy the full project.
 
-Have the researcher review a **project-local**
-`approved-code-files.txt` manifest containing **one relative regular-file
+Review a **project-local**
+`approved-code-files.txt` manifest with your agent containing **one relative regular-file
 path per line**, relative to the chosen source directory. For example,
 `src/main.py` and `scripts/run.pbs` are only illustrative. Exclude data,
 checkpoints, secrets, output, symlinks requiring special handling, absolute
@@ -556,7 +555,7 @@ paths, `..` traversal, and **directory-only entries**. This manifest and any
 transfer logs belong in the research project, **not the setup tool**.
 
 All paths/aliases in the examples below are **placeholders**. Run these
-commands on the researcher's **local machine** after replacing them with the
+commands on your **local machine** after replacing them with the
 actual authorized locations. `--files-from` restricts transfer to the
 explicitly reviewed list; do not add recursion flags or `--delete`.
 
@@ -568,13 +567,13 @@ After permission to create the local code directory, **preview** the pull:
 rsync -tv --dry-run --itemize-changes --files-from="<approved-local-manifest>" "gaas:<approved-gaas-source-root>/" "<approved-local-code-root>/"
 ```
 
-Check the preview with the researcher. Only after approval, execute:
+Review the preview with your agent. Only after your approval, execute:
 
 ```bash
 rsync -tv --itemize-changes --files-from="<approved-local-manifest>" "gaas:<approved-gaas-source-root>/" "<approved-local-code-root>/"
 ```
 
-The GAAS originals remain untouched. If the user wants a private Git remote,
+The GAAS originals remain untouched. If you want a private Git remote,
 initialize/reuse Git and publish **only reviewed local code** from the local
 computer, after Section 3A's `.gitignore` and staged-file checks. No GitHub
 credential is stored on GAAS.
@@ -643,10 +642,10 @@ The difference is that the development environment now runs on your own computer
 ### Using other editors and SSH tools
 
 - **VS Code:** Open the **local** project folder with `File → Open Folder` (or `code <local-project-path>`). Do not use a GAAS Remote-SSH workspace for the agent session, because its server/extensions may run on the shared login node. A local VS Code window can still run SSH commands to GAAS from its integrated terminal.
-- **MobaXterm:** You can keep using it for manual SSH/file access. It is not automatically the execution environment for the AI agent. Check that the agent's own local SSH client has the correct alias and keys; do not assume a MobaXterm session grants access to PowerShell, WSL, or the editor.
-- **Windows PowerShell / WSL / macOS / Linux:** Use the shell, path syntax, Git installation, and SSH configuration belonging to the agent's actual local runtime. `~` paths and example command syntax elsewhere in this guide may need to be adapted. No particular editor or OS is required.
+- **MobaXterm:** You can keep using it for manual SSH/file access. It is not automatically the execution environment for the AI agent. Check that your agent's own local SSH client has the correct alias and keys; do not assume a MobaXterm session grants access to PowerShell, WSL, or the editor.
+- **Windows PowerShell / WSL / macOS / Linux:** Use the shell, path syntax, Git installation, and SSH configuration belonging to your agent's actual local runtime. `~` paths and example command syntax elsewhere in this guide may need to be adapted. No particular editor or OS is required.
 
-If the agent cannot use the researcher's existing SSH method safely, stop and ask for help rather than installing a remote coding agent or VS Code server on GAAS.
+If your agent cannot use your existing SSH method safely, it should stop and ask you for help rather than installing a remote coding agent or VS Code server on GAAS.
 
 
 ---
@@ -660,7 +659,7 @@ gaas_agent_instructions.md
 ```
 
 into the root of your **confirmed local project** and customize **that
-project-local copy** for the researcher's actual configuration. Keep the
+project-local copy** for your actual configuration. Keep the
 original inside the reusable setup package unchanged.
 
 For example:
@@ -676,7 +675,7 @@ project/
 
 ### Personalize the installed GAAS instructions
 
-Before normal GAAS work, have the local agent configure the **copied**
+Before normal GAAS work, ask your local agent to configure the **copied**
 `gaas_agent_instructions.md` and ask you to review the changes:
 
 - Fill its **Project-local configuration** table: local project and runtime,
@@ -775,7 +774,7 @@ From your **local** agent, try a simple request such as:
 
 > Check which GAAS host I am connected to.
 
-The agent should perform something equivalent to:
+Your agent should perform something equivalent to:
 
 ```bash
 ssh gaas "hostname"
@@ -787,7 +786,7 @@ rather than attempting to start another agent on GAAS.
 
 ## Test 3 — Check PBS
 
-Ask the local agent to inspect your current jobs.
+Ask your local agent to inspect your current jobs.
 
 It should use an appropriate command such as:
 
@@ -806,12 +805,12 @@ Before any experiment, verify that the local and GAAS-side **approved code files
 
 ## Test 3B — Confirm where the agent is running
 
-Ask the agent to explain which computer/OS is executing it and which SSH client it uses. If using VS Code, ensure the opened workspace is **local**, not GAAS Remote-SSH. Confirm that the intended work does not create agent or VS Code server processes on the login node.
+Ask your agent to explain which computer/OS is executing it and which SSH client it uses. If using VS Code, ensure the opened workspace is **local**, not GAAS Remote-SSH. Confirm that the intended work does not create agent or VS Code server processes on the login node.
 
 ## Test 4 — Submit a small test job
 
 After the earlier checks, confirm the **approved GAAS code/PBS directory**,
-the user's permission to submit, and any site-required queue/account settings.
+your permission to submit, and any site-required queue/account settings.
 Do not guess a queue or project allocation.
 
 With approval, create `gaas_setup_smoke.pbs` in the **local research
@@ -831,7 +830,7 @@ printf 'GAAS_SETUP_SMOKE_OK host=%s\n' "$(hostname)"
 
 Using the project's **approved Git or Section 3B explicit-file transfer**,
 place only this approved script in the confirmed GAAS PBS execution directory.
-Then ask the researcher to approve submission. The local agent should use an
+Your agent should then ask for your approval before submitting the job. It should use an
 equivalent non-interactive command (substitute the real alias and authorized
 directory, and quote the remote path correctly for its shell):
 
@@ -847,14 +846,14 @@ jobs may disappear from `qstat`, so inspect their output/status records.
 
 If PBS rejects the submission or the marker is missing, report the error
 and leave the test **unverified**. **Never** run the test computation directly
-on the login node as a workaround. The researcher performs the final manual
+on the login node as a workaround. You perform the final manual
 verification before trusting the workflow.
 
 ---
 
 # 8. Normal Workflow After Setup
 
-Once configured, the researcher can close the setup-package workspace and open **their own local research project** with the agent. Keep the downloaded package in its original local folder for future projects; it must not contain the current project's configuration, paths, or state.
+Once configured, you can close the setup-package workspace and open **your own local research project** with your agent. Keep the downloaded package in its original local folder for future projects; it must not contain the current project's configuration, paths, or state.
 
 Day-to-day usage should feel very similar to a normal local agent workflow.
 
